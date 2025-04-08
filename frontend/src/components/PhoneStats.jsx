@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../constants';
 
 function PhoneStats({ dateRange }) {
   const [phoneStats, setPhoneStats] = useState([]);
   const [selectedPhone, setSelectedPhone] = useState(0);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/messages/mobile-stats', {
+    axios.get(API_URL+'/messages/mobile-stats', {
       params: dateRange,
     }).then((res) => setPhoneStats(res.data));
   }, [dateRange]);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_URL } from '../constants';
 import axios from 'axios';
 
 function MessageTable({ dateRange }) {
@@ -6,7 +7,7 @@ function MessageTable({ dateRange }) {
   const [mobileId, setMobileId] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/messages', {
+    axios.get(API_URL+'/messages', {
       params: { ...dateRange, mobileId: mobileId || undefined },
     }).then((res) => setMessages(res.data.messages));
   }, [dateRange, mobileId]);

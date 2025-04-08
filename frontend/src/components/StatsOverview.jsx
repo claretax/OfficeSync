@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import {API_URL} from '../constants';
 import { Pie } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -9,7 +10,7 @@ function StatsOverview({ dateRange }) {
   const [stats, setStats] = useState({ totalSent: 0, totalFailed: 0, totalPending: 0 });
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/messages/stats', {
+    axios.get(API_URL+'/messages/stats', {
       params: dateRange,
     }).then((res) => setStats(res.data));
   }, [dateRange]);
