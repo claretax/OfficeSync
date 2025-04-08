@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {API_URL} from '../constants';
 
 function Dashboard() {
   const [inactivePhones, setInactivePhones] = useState([]);
@@ -14,7 +15,7 @@ function Dashboard() {
         const startDate = new Date(today.setHours(0, 0, 0, 0));
         const endDate = new Date(today.setHours(23, 59, 59, 999));
 
-        const response = await axios.get('http://localhost:5000/api/messages/mobile-stats', {
+        const response = await axios.get(API_URL+'/messages/mobile-stats', {
           params: {
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString()
