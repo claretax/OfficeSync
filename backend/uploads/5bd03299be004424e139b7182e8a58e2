@@ -1,0 +1,3 @@
+name,phone_number,email,whatsapp_number,address,extra_field
+John Doe,+1234567890,john@example.com,+1234567890,123 Main St,Custom1
+Jane Smith,+0987654321,jane@example.com,,,Custom2
