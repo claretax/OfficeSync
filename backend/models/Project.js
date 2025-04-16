@@ -42,9 +42,6 @@ const projectSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  budget: {
-    type: Number
-  },
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'critical'],

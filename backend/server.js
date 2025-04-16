@@ -12,10 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/project-tracker', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/project-tracker', {})
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
@@ -23,7 +20,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/project-t
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/users', require('./routes/users'));
 app.use('/api/deadline-extensions', require('./routes/deadlineExtensions'));
 app.use('/api/pendencies', require('./routes/pendencies'));
 

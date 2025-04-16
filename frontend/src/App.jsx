@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import DashboardLayout from './components/DashboardLayout';
 import Dashboard from './pages/Dashboard';
+import Projects from './pages/Projects';
+import NewProjectForm from './components/NewProjectForm';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
             <Route path="/stats" element={<DashboardLayout />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/" element={<div className="text-2xl">Welcome to SMS Dashboard</div>} />
+            <Route path="/projects" element={<Projects/> }/>
+            <Route path="/projects/new" element={<NewProjectForm />} />
           </Routes>
         </main>
       </div>

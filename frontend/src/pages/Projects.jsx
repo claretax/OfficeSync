@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import { Link } from 'react-router-dom';
 
 const Projects = () => {
   const projects = [
@@ -47,9 +48,9 @@ const Projects = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">Projects</h1>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+          <Link to="/projects/new" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
             Create New Project
-          </button>
+          </Link>
         </div>
 
         <div className="bg-white rounded-lg shadow overflow-hidden">
