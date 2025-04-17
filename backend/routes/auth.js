@@ -132,4 +132,18 @@ router.get('/verify', async (req, res) => {
   }
 });
 
+
+// @route   GET api/auth/users/:role
+// @desc    Get users with specific role
+// @access  Private
+router.get('/users/:role', async (req, res) => {
+  try {
+    const users = await User.find({ role: req.params.role }).select('name email department');
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router; 

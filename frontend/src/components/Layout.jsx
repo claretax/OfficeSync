@@ -6,6 +6,7 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/leads', label: 'Leads', icon: '👥' },
     { path: '/projects', label: 'Projects', icon: '📋' },
     { path: '/tasks', label: 'Tasks', icon: '✅' },
     { path: '/deadlines', label: 'Deadlines', icon: '⏰' },

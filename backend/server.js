@@ -18,6 +18,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/project-tra
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/leads', require('./routes/leadRoutes'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/deadline-extensions', require('./routes/deadlineExtensions'));

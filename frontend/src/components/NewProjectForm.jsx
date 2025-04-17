@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {API_URL} from '../constants'
 
 const NewProjectForm = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,10 @@ const NewProjectForm = () => {
     },
     tags: ''
   });
+
+  const [managers, setManagers] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +62,24 @@ const NewProjectForm = () => {
       alert('Error creating project.');
     }
   };
+
+  const getManagers = async ()=>{
+    const response = await axios.get(API_URL+'/api/auth/users/manager');
+    setManagers(response.data);
+    return response.data;
+  }
+
+  const getClients = async ()=>{
+    const response = await axios.get(API_URL+'/api/auth/users/client');
+    setClients(response.data);
+    return response.data;
+  }
+
+
+  useEffect(() => {
+    getManagers()
+    getClients()
+  }, [])
 
   return (
     <div className="bg-white p-8 rounded-lg shadow mt-6 max-w-3xl mx-auto">
@@ -135,34 +158,39 @@ const NewProjectForm = () => {
             className="w-full px-4 py-2 border rounded-md"
             placeholder="Progress %"
           />
-
-          <input
-            type="number"
-            name="budget"
-            value={formData.budget}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            placeholder="Budget"
-          />
-
-          <input
-            type="text"
+          <select
             name="manager"
             placeholder="Manager ID"
             value={formData.manager}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-md"
             required
-          />
+          >
+            <option value="">Select Manager</option>
+            {/* Assuming managers is an array of manager objects with id and name */}
+            {managers.map(manager => (
+              <option key={manager._id} value={manager._id}>
+                {manager.name}
+              </option>
+            ))}
+            </select>
 
-          <input
+          <select
             type="text"
             name="client"
             placeholder="Client ID"
             value={formData.client}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-md"
-          />
+          >
+            <option value="">Select Client</option>
+            {/* Assuming clients is an array of client objects with id and name */}
+            {clients.map(client => (
+              <option key={client._id} value={client._id}>
+                {client.name}
+              </option>
+            ))}
+            </select>
         </div>
 
         <input
@@ -173,34 +201,6 @@ const NewProjectForm = () => {
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded-md"
         />
-
-        <input
-          type="text"
-          name="customFields.techStack"
-          placeholder="Tech Stack"
-          value={formData.customFields.techStack}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md"
-        />
-
-        <input
-          type="text"
-          name="customFields.location"
-          placeholder="Location"
-          value={formData.customFields.location}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md"
-        />
-
-        <input
-          type="text"
-          name="customFields.deliveryMode"
-          placeholder="Delivery Mode"
-          value={formData.customFields.deliveryMode}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md"
-        />
-
         <input
           type="text"
           name="tags"

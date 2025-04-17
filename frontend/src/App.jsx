@@ -4,6 +4,8 @@ import DashboardLayout from './components/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import NewProjectForm from './components/NewProjectForm';
+import Leads from './pages/Leads';
+import NewLeadForm from './components/NewLeadForm';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Routes>
             <Route path="/stats" element={<DashboardLayout />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/leads" element={<Leads />} />
+            <Route path="/leads/new" element={<NewLeadForm />} />
             <Route path="/" element={<div className="text-2xl">Welcome to SMS Dashboard</div>} />
             <Route path="/projects" element={<Projects/> }/>
             <Route path="/projects/new" element={<NewProjectForm />} />
