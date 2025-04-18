@@ -45,6 +45,19 @@ const Leads = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+  const handleDelete = async (id) => {
+    try{
+      const response = await axios.delete(`${API_URL}/api/leads/${id}`);
+      if (response.status === 200) {
+        // Filter out the deleted lead from the state
+        setLeads((prevLeads) => prevLeads.filter((lead) => lead._id !== id));
+        alert('Lead deleted successfully');
+      }
+    }catch (error) {
+      console.error('Error deleting lead:', error);
+    };
+  }
+
 
   return (
     <Layout>
@@ -121,7 +134,8 @@ const Leads = () => {
                       <button className="text-blue-600 hover:text-blue-900 mr-3">
                         Edit
                       </button>
-                      <button className="text-red-600 hover:text-red-900">
+                      <button className="text-red-600 hover:text-red-900"
+                        onClick={() => handleDelete(project._id)}>
                         Delete
                       </button>
                     </td>
