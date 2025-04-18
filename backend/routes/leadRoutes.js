@@ -42,4 +42,18 @@ route.get('/', async(req, res) =>{
         res.status(500).json({message: 'Server error'});
     }
 })
+//delete a lead
+route.delete('/:id', async(req, res) =>{
+    try{
+        const lead = await Lead.findByIdAndDelete(req.params.id);
+        if(!lead){
+            return res.status(404).json({message: 'Lead not found'});
+        }
+        res.status(200).json({message: 'Lead deleted successfully'});
+    }catch(err){
+        console.error(err);
+        res.status(500).json({message: 'Server error'})
+    }
+})
+
 module.exports = route;
