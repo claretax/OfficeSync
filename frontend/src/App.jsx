@@ -6,6 +6,7 @@ import Projects from './pages/Projects';
 import NewProjectForm from './components/NewProjectForm';
 import Leads from './pages/Leads';
 import NewLeadForm from './components/NewLeadForm';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/leads/new" element={<NewLeadForm />} />
-            <Route path="/" element={<div className="text-2xl">Welcome to SMS Dashboard</div>} />
+            <Route path="/" element={<HomePage/>} />
             <Route path="/projects" element={<Projects/> }/>
             <Route path="/projects/new" element={<NewProjectForm />} />
           </Routes>
