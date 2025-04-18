@@ -18,7 +18,7 @@ router.post('/register', [
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, email, password, role, department } = req.body;
+  const { name, email, password, phone, role, department } = req.body;
 
   try {
     // Check if user exists
@@ -32,6 +32,7 @@ router.post('/register', [
       name,
       email,
       password,
+      phone,
       role: role || 'employee',
       department
     });
