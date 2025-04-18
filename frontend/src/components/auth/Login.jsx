@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import {API_URL} from '../../constants'
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
+
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -14,11 +22,17 @@ const LoginForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log('Login form submitted:', formData);
-    alert('Login successful!');
+  const handleSubmit = async (e) => {
+    e.preventDefault();    
+    console.log('Form submitted:', formData);
+    try {
+      const response = await axios.post(API_URL + '/api/auth/login', formData);
+      localStorage.setItem('token', response.data.token)
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+      alert('Login failed. Please try again.');
+    }
   };
 
   return (
