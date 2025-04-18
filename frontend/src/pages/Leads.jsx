@@ -10,7 +10,7 @@ const Leads = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getLeads = async () => {
-    const response = await axios.get(API_URL + '/api/leads');
+    const response = await axios.get(API_URL + '/leads');
     setLeads(response.data);
     return response.data;
   };

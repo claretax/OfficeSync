@@ -34,7 +34,7 @@ const NewLeadForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(API_URL + '/api/leads', formData);
+      await axios.post(API_URL + '/leads', formData);
       alert('Lead created successfully!');
       navigate('/leads'); // Redirect to leads page or any other page
     } catch (error) {
@@ -44,13 +44,13 @@ const NewLeadForm = () => {
   };
 
   const getManagers = async () => {
-    const response = await axios.get(API_URL + '/api/auth/users/manager');
+    const response = await axios.get(API_URL + '/auth/users/manager');
     setManagers(response.data);
     return response.data;
   };
 
   const getClients = async () => {
-    const response = await axios.get(API_URL + '/api/auth/users/client');
+    const response = await axios.get(API_URL + '/auth/users/client');
     setClients(response.data);
     return response.data;
   };

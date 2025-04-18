@@ -26,7 +26,7 @@ const LoginForm = () => {
     e.preventDefault();    
     console.log('Form submitted:', formData);
     try {
-      const response = await axios.post(API_URL + '/api/auth/login', formData);
+      const response = await axios.post(API_URL + '/auth/login', formData);
       localStorage.setItem('token', response.data.token)
       navigate('/dashboard');
     } catch (error) {

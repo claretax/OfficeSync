@@ -55,7 +55,7 @@ const NewProjectForm = () => {
     };
 
     try {
-      await axios.post('/api/projects', finalData);
+      await axios.post('/projects', finalData);
       alert('Project created successfully!');
     } catch (error) {
       console.error(error);
@@ -64,13 +64,13 @@ const NewProjectForm = () => {
   };
 
   const getManagers = async ()=>{
-    const response = await axios.get(API_URL+'/api/auth/users/manager');
+    const response = await axios.get(API_URL+'/auth/users/manager');
     setManagers(response.data);
     return response.data;
   }
 
   const getClients = async ()=>{
-    const response = await axios.get(API_URL+'/api/auth/users/client');
+    const response = await axios.get(API_URL+'/auth/users/client');
     setClients(response.data);
     return response.data;
   }
