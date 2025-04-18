@@ -63,15 +63,7 @@ router.post('/register', [
 // @route   POST api/auth/login
 // @desc    Authenticate user & get token
 // @access  Public
-router.post('/login', [
-  body('email', 'Please include a valid email').isEmail(),
-  body('password', 'Password is required').exists()
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -80,21 +72,16 @@ router.post('/login', [
     if (!user) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
-
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    // Update last login
-    user.lastLogin = Date.now();
-    await user.save();
-
     // Create JWT token
     const payload = {
       user: {
-        id: user.id
+        id: user._id
       }
     };
 
