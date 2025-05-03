@@ -35,20 +35,7 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/projects
 // @desc    Create a project
 // @access  Private (Admin/Manager)
-router.post('/', [
-  auth,
-  [
-    body('name', 'Name is required').not().isEmpty(),
-    body('description', 'Description is required').not().isEmpty(),
-    body('startDate', 'Start date is required').not().isEmpty(),
-    body('endDate', 'End date is required').not().isEmpty()
-  ]
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+router.post('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (user.role !== 'admin' && user.role !== 'manager') {
@@ -60,12 +47,10 @@ router.post('/', [
       description,
       startDate,
       endDate,
-      teamMembers,
+      team,
       client,
-      budget,
       priority,
-      customFields,
-      tags
+      tags,
     } = req.body;
 
     const newProject = new Project({
@@ -73,15 +58,12 @@ router.post('/', [
       description,
       startDate,
       endDate,
-      manager: req.user.id,
-      teamMembers: teamMembers || [],
+      team,
       client,
-      budget,
       priority,
-      customFields,
-      tags
+      tags,
+      createdBy: req.user.id
     });
-
     const project = await newProject.save();
     res.json(project);
   } catch (err) {
