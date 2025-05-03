@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import DashboardLayout from "./layouts/DashboardLayout";
+import ProjectsView from "./pages/dashboard/Projects/ProjectsView";
 
 function App() {
   return (
@@ -20,15 +21,10 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/stats" element={<SmsDashboard />} />
             <Route path="/dashboard" element={<DashboardLayout />} >
               <Route path="sms-stats" element={<SmsDashboard />} />
-              <Route path="projects" element={<Projects />} />
+              <Route path="projects" element={<ProjectsView />} />
             </Route>
-            <Route path="/leads" element={<Leads />} />
-            <Route path="/leads/new" element={<NewLeadForm />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/new" element={<NewProjectForm />} />
           </Routes>
         </main>
       </div>
