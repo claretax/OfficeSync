@@ -28,7 +28,7 @@ app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/deadline-extensions', require('./routes/deadlineExtensions'));
 app.use('/api/pendencies', require('./routes/pendencies'));
-
+app.use('/api/teams', require('./routes/teamRoutes'))
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

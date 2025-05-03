@@ -29,15 +29,10 @@ const projectSchema = new mongoose.Schema({
     max: 100,
     default: 0
   },
-  manager: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+    team:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref : 'Team'
+    },
   client: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -46,10 +41,6 @@ const projectSchema = new mongoose.Schema({
     type: String,
     enum: ['low', 'medium', 'high', 'critical'],
     default: 'medium'
-  },
-  customFields: {
-    type: Map,
-    of: mongoose.Schema.Types.Mixed
   },
   tags: [{
     type: String,

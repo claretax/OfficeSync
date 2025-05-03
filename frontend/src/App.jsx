@@ -22,7 +22,8 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/stats" element={<SmsDashboard />} />
             <Route path="/dashboard" element={<DashboardLayout />} >
-              <Route path="smstats" element={<SmsDashboard />} />
+              <Route path="sms-stats" element={<SmsDashboard />} />
+              <Route path="projects" element={<Projects />} />
             </Route>
             <Route path="/leads" element={<Leads />} />
             <Route path="/leads/new" element={<NewLeadForm />} />
