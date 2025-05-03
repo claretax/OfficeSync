@@ -3,7 +3,7 @@ import StatsOverview from './StatsOverview';
 import PhoneStats from './PhoneStats';
 import MessageTable from './MessageTable';
 
-function DashboardLayout() {
+function SmsDashboard() {
   const [dateRange, setDateRange] = useState({
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0],
@@ -33,4 +33,4 @@ function DashboardLayout() {
   );
 }
 
-export default DashboardLayout;
+export default SmsDashboard;

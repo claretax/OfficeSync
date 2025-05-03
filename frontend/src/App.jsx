@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import DashboardLayout from "./components/DashboardLayout";
+import SmsDashboard from "./components/SmsDashboard";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import NewProjectForm from "./components/NewProjectForm";
@@ -20,7 +20,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/stats" element={<DashboardLayout />} />
+            <Route path="/stats" element={<SmsDashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/leads/new" element={<NewLeadForm />} />
