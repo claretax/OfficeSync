@@ -4,7 +4,7 @@ function ListDetailsPane({ leftContent, rightContent }) {
   return (
     <div className='flex h-full'>
         {/* Lists section */}
-        <div className='w-1/3 border-r bg-white overflow-y-auto'>
+        <div className='w-1/5 border-r bg-white overflow-y-auto'>
             {leftContent}
         </div>
         {/* Details section */}
