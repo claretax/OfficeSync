@@ -93,76 +93,17 @@ router.post('/', auth,
   }
 });
 
-// @route   PUT api/deadline-extensions/:id/approve
-// @desc    Approve a deadline extension
-// @access  Private (Admin/Manager)
-router.put('/:id/approve', auth, async (req, res) => {
-  try {
-    const extension = await DeadlineExtension.findById(req.params.id);
-    if (!extension) {
-      return res.status(404).json({ msg: 'Extension request not found' });
+//get the deadline by project id
+router.get('/:projectId',auth, async(req, res)=>{
+    try{
+      const projectId = req.params.projectId;
+      const extesntions = await DeadlineExtension.find({project: projectId});
+      res.status(200).json(extesntions);
+    }catch(error){
+      console.log(error.message)
+      res.status(500).send('Server error');
     }
-
-    const user = await User.findById(req.user.id);
-    const task = await Task.findById(extension.task);
-    const project = await Project.findById(task.project);
-
-    if (user.role !== 'admin' && project.manager.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'Not authorized to approve this extension' });
-    }
-
-    extension.status = 'approved';
-    extension.approvedBy = req.user.id;
-    extension.approvalDate = Date.now();
-
-    // Update task deadline
-    task.deadline = extension.newDeadline;
-    await task.save();
-    await extension.save();
-
-    res.json(extension);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
-
-// @route   PUT api/deadline-extensions/:id/reject
-// @desc    Reject a deadline extension
-// @access  Private (Admin/Manager)
-router.put('/:id/reject', [
-  auth,
-  body('rejectionReason', 'Rejection reason is required').not().isEmpty()
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  try {
-    const extension = await DeadlineExtension.findById(req.params.id);
-    if (!extension) {
-      return res.status(404).json({ msg: 'Extension request not found' });
-    }
-
-    const user = await User.findById(req.user.id);
-    const task = await Task.findById(extension.task);
-    const project = await Project.findById(task.project);
-
-    if (user.role !== 'admin' && project.manager.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'Not authorized to reject this extension' });
-    }
-
-    extension.status = 'rejected';
-    extension.rejectionReason = req.body.rejectionReason;
-    await extension.save();
-
-    res.json(extension);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+})
 
 // Helper function to get projects managed by a user
 async function getManagedProjects(userId) {

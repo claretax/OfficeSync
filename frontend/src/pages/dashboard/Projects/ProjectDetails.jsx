@@ -1,11 +1,14 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 
 function ProjectDetails({ project }) {
+  const [deadlineExtensions, setDeadlineExtensions] = useState([]);
   const [startDate, setStartDate] = useState(
-    project ? new Date(project.startDate).toISOString().split('T')[0] : ''
+    project ? new Date(project.startDate).toISOString().split("T")[0] : ""
   );
   const [endDate, setEndDate] = useState(
-    project ? new Date(project.endDate).toISOString().split('T')[0] : ''
+    project ? new Date(project.endDate).toISOString().split("T")[0] : ""
   );
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
@@ -22,43 +25,110 @@ function ProjectDetails({ project }) {
     return <p className="p-4 text-gray-600">Select a project from the list.</p>;
   }
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const extensions = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/deadline-extensions/${project._id}`,
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
+      setDeadlineExtensions(response.data);
+      console.log(response.data)
+    };
+    extensions();
+  }, [project]);
+
   return (
     <div>
-      <div className=''>
-      <h2 className="text-2xl font-bold mb-4">{project.name}</h2>
-      {project.description &&(<p className="mb-4 border-b-2 border-blue-300">{project.description}</p>)}
-      <div className="flex flex-wrap justify-between items-center gap-2">
-      <p><strong>Team Leader:</strong> {project.team.teamLeader.name}</p>
-      <div className='flex flex-row gap-2 justify-between items-center'>
-          <label className="block text-sm font-medium text-gray-700">
-            <strong>Start Date:</strong>
-          </label>
-      <input
-            type="date"
-            value={startDate}
-            onChange={handleStartDateChange}
-            className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
-            disabled
-          />
+      <div className="">
+        <h2 className="text-2xl font-bold mb-4">{project.name}</h2>
+        {project.description && (
+          <p className="mb-4 border-b-2 border-blue-300">
+            {project.description}
+          </p>
+        )}
+        <div className="flex flex-wrap justify-between items-center gap-2">
+          <p>
+            <strong>Team Leader:</strong> {project.team.teamLeader.name}
+          </p>
+          <div className="flex flex-row gap-2 justify-between items-center">
+            <label className="block text-sm font-medium text-gray-700">
+              <strong>Start Date:</strong>
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={handleStartDateChange}
+              className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
+              disabled
+            />
           </div>
-          <div className='flex flex-row gap-2 justify-between items-center'>
-          <label className="block text-sm font-medium text-gray-700">
-            <strong>Start Date:</strong>
-          </label>
-        <input
-            type="date"
-            value={endDate}
-            onChange={handleEndDateChange}
-            className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
-          />
+          <div className="flex flex-row gap-2 justify-between items-center">
+            <label className="block text-sm font-medium text-gray-700">
+              <strong>Start Date:</strong>
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={handleEndDateChange}
+              className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
+            />
           </div>
-        <p><strong>Client:</strong> {project.client.name}</p>
-        <p><strong>Priority:</strong> {project.priority}</p>
-        <p className="col-span-2"><strong>Tags:</strong> {project.tags ? project.tags.join(', ') : 'None'}</p>
-      </div>
+          <p>
+            <strong>Client:</strong> {project.client.name}
+          </p>
+          <p>
+            <strong>Priority:</strong> {project.priority}
+          </p>
+          <p className="col-span-2">
+            <strong>Tags:</strong>{" "}
+            {project.tags ? project.tags.join(", ") : "None"}
+          </p>
+        </div>
+        <div className="mt-4">
+          <div className="p-2">
+            <h3 className="text-xl font-semibold">Timeline Extensions</h3>
+          </div>
+
+          <div className="overflow-x-auto"> {/* Added overflow for smaller screens */}
+  <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden"> {/* Added table styling */}
+    <thead className="bg-red-300 text-white"> {/* Header styling */}
+      <tr>
+        <th className="text-left p-2 uppercase font-semibold">Updated At</th> {/* Header cell styling */}
+        <th className="text-left p-2 uppercase font-semibold">New Deadline</th> {/* Header cell styling */}
+        <th className="text-left p-2 uppercase font-semibold">Reason</th> {/* Header cell styling */}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        deadlineExtensions.length > 0 ? (
+          deadlineExtensions.map((extension, index) => (
+            <tr key={index} className="border-b border-gray-200 hover:bg-gray-100"> {/* Row styling */}
+              <td className="p-2">{extension.updatedAt.split('T')[0]}</td> {/* Data cell styling */}
+              <td className="p-2">{extension.newDeadline.split('T')[0]}</td> {/* Data cell styling */}
+              <td className="p-2">{extension.reason}</td> {/* Data cell styling */}
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="3" className="text-center p-2 text-gray-500"> {/* Span columns for no data message */}
+              No deadline extensions found.
+            </td>
+          </tr>
+        )
+      }
+    </tbody>
+  </table>
+</div>
+
+        </div>
       </div>
       {/* Add more project details as needed */}
-    </div>  
+    </div>
   );
 }
 
