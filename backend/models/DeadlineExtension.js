@@ -1,14 +1,9 @@
 const mongoose = require('mongoose');
 
 const deadlineExtensionSchema = new mongoose.Schema({
-  task: {
+  project: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Task',
-    required: true
-  },
-  requestedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Project',
     required: true
   },
   oldDeadline: {
@@ -28,40 +23,18 @@ const deadlineExtensionSchema = new mongoose.Schema({
     enum: ['client_delay', 'resource_issue', 'scope_change', 'technical_issue', 'other'],
     required: true
   },
-  status: {
-    type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
-  },
-  approvedBy: {
+  requestedBy:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  approvalDate: {
-    type: Date
-  },
-  rejectionReason: {
-    type: String
-  },
-  comments: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    text: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
+    ref: 'User',
+    required: true
+  }
 }, {
   timestamps: true
 });
 
 // Indexes for better query performance
-deadlineExtensionSchema.index({ task: 1 });
+deadlineExtensionSchema.index({ project: 1 });
 deadlineExtensionSchema.index({ requestedBy: 1 });
-deadlineExtensionSchema.index({ status: 1 });
 
 const DeadlineExtension = mongoose.model('DeadlineExtension', deadlineExtensionSchema);
 

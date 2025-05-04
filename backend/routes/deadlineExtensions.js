@@ -44,50 +44,49 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/deadline-extensions
 // @desc    Request a deadline extension
 // @access  Private
-router.post('/', [
-  auth,
-  [
-    body('task', 'Task ID is required').not().isEmpty(),
-    body('newDeadline', 'New deadline is required').not().isEmpty(),
-    body('reason', 'Reason is required').not().isEmpty(),
-    body('category', 'Category is required').not().isEmpty()
-  ]
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  try {
-    const task = await Task.findById(req.body.task);
-    if (!task) {
-      return res.status(404).json({ msg: 'Task not found' });
-    }
-
-    // Check if user is assigned to the task
-    const user = await User.findById(req.user.id);
-    if (user.role !== 'admin' && !task.assignedTo.includes(req.user.id)) {
-      return res.status(403).json({ msg: 'Not authorized to request extension for this task' });
-    }
-
+router.post('/', auth,
+  async (req, res) => {
     const {
-      task: taskId,
+      projectId,
       newDeadline,
       reason,
       category
     } = req.body;
+  try {
+    const newDeadlineDate = new Date(newDeadline);
+    if (isNaN(newDeadlineDate.getTime())) {
+      return res.status(400).json({ msg: 'Invalid newDeadline date' });
+    }
+
+    const project = await Project.findById(req.body.projectId);
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+
+    // Check if user is admin
+    const user = await User.findById(req.user.id);
+    if (user.role !== 'admin') {
+      return res.status(403).json({ msg: 'Not authorized to request extension for this task' });
+    }
 
     const newExtension = new DeadlineExtension({
-      task: taskId,
+      project: projectId,
       requestedBy: req.user.id,
-      oldDeadline: task.deadline,
-      newDeadline,
+      oldDeadline: project.endDate,
+       newDeadline: newDeadlineDate,
       reason,
       category
     });
+    project.endDate = newDeadlineDate;
+    await Promise.all([newExtension.save(), project.save()]);
 
-    const extension = await newExtension.save();
-    res.json(extension);
+    res.status(200).json({
+      extension: newExtension,
+      project: {
+        _id: project._id,
+        endDate: project.endDate,
+      },
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://rdmodels:YFpB8St0cspQ6nM2@rdmodels.s7wamg6.mongodb.net/', {})
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://rdmodels:YFpB8St0asdssde@dssdds.s7wamg6.mongodb.net/', {})
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
@@ -29,6 +29,7 @@ app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/deadline-extensions', require('./routes/deadlineExtensions'));
 app.use('/api/pendencies', require('./routes/pendencies'));
 app.use('/api/teams', require('./routes/teamRoutes'))
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
