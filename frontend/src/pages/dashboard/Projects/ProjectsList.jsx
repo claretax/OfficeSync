@@ -12,7 +12,7 @@ function ProjectsList({ projects, onSelectProject, selectedProjectId }) {
       <input type="text" name="" placeholder='Search Project' id=""
         className='bg-transparent p-1 rounded-md focus:outline-0 focus:bg-white'
       />
-      <button className='bg-blue-400 pt-1 pb-1 pr-4 pl-4 rounded-md hover:bg-blue-300'>Add</button>
+      <button className='bg-blue-500 pt-1 pb-1 pr-4 pl-4 rounded-md text-white hover:bg-blue-300'>Add</button>
       </div>
       <ul>
       {projects.map(project => (
