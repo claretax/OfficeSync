@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import DeadlineExtension from "../../../components/ui/DeadlineExtension";
 
 function ProjectDetails({ project }) {
   const [deadlineExtensions, setDeadlineExtensions] = useState([]);
@@ -25,9 +26,9 @@ function ProjectDetails({ project }) {
     return <p className="p-4 text-gray-600">Select a project from the list.</p>;
   }
 
-  useEffect(() => {
+  const fetchExtensions = async () => {
     const token = localStorage.getItem("token");
-    const extensions = async () => {
+    try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/deadline-extensions/${project._id}`,
         {
@@ -37,10 +38,22 @@ function ProjectDetails({ project }) {
         }
       );
       setDeadlineExtensions(response.data);
-      console.log(response.data)
-    };
-    extensions();
-  }, [project]);
+    } catch (error) {
+      console.error("Failed to fetch deadline extensions:", error);
+    }
+  };
+  
+
+  useEffect(() => {
+    if (project) {
+      fetchExtensions();
+    }
+  }, [project, endDate]);
+
+  const handleExtensionAdded = (newExtension) => {
+    fetchExtensions();
+      setEndDate(newExtension.newDeadline);
+  };
 
   return (
     <div>
@@ -94,37 +107,64 @@ function ProjectDetails({ project }) {
             <h3 className="text-xl font-semibold">Timeline Extensions</h3>
           </div>
 
-          <div className="overflow-x-auto"> {/* Added overflow for smaller screens */}
-  <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden"> {/* Added table styling */}
-    <thead className="bg-red-300 text-white"> {/* Header styling */}
-      <tr>
-        <th className="text-left p-2 uppercase font-semibold">Updated At</th> {/* Header cell styling */}
-        <th className="text-left p-2 uppercase font-semibold">New Deadline</th> {/* Header cell styling */}
-        <th className="text-left p-2 uppercase font-semibold">Reason</th> {/* Header cell styling */}
-      </tr>
-    </thead>
-    <tbody>
-      {
-        deadlineExtensions.length > 0 ? (
-          deadlineExtensions.map((extension, index) => (
-            <tr key={index} className="border-b border-gray-200 hover:bg-gray-100"> {/* Row styling */}
-              <td className="p-2">{extension.updatedAt.split('T')[0]}</td> {/* Data cell styling */}
-              <td className="p-2">{extension.newDeadline.split('T')[0]}</td> {/* Data cell styling */}
-              <td className="p-2">{extension.reason}</td> {/* Data cell styling */}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="3" className="text-center p-2 text-gray-500"> {/* Span columns for no data message */}
-              No deadline extensions found.
-            </td>
-          </tr>
-        )
-      }
-    </tbody>
-  </table>
-</div>
-
+          <div className="overflow-x-auto h-96 shadow-lg">
+            {" "}
+            {/* Added overflow for smaller screens */}
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              {" "}
+              {/* Added table styling */}
+              <thead className="bg-red-300 text-white">
+                {" "}
+                {/* Header styling */}
+                <tr>
+                  <th className="text-left p-2 uppercase font-semibold">
+                    Updated At
+                  </th>{" "}
+                  {/* Header cell styling */}
+                  <th className="text-left p-2 uppercase font-semibold">
+                    New Deadline
+                  </th>{" "}
+                  {/* Header cell styling */}
+                  <th className="text-left p-2 uppercase font-semibold">
+                    Reason
+                  </th>{" "}
+                  {/* Header cell styling */}
+                  <th className="text-left p-2 uppercase font-semibold">
+                    Category
+                  </th>{" "}
+                  {/* Header cell styling */}
+                </tr>
+              </thead>
+              <tbody>
+                {deadlineExtensions.length > 0 ? (
+                  deadlineExtensions.map((extension, index) => (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-200 hover:bg-gray-100"
+                    >
+                      <td className="p-2">
+                        {extension.updatedAt.split("T")[0]}
+                      </td>
+                      <td className="p-2">
+                        {extension.newDeadline.split("T")[0]}
+                      </td>
+                      <td className="p-2">{extension.reason}</td>
+                      <td className="p-2">{extension.category}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center p-2 text-gray-500">
+                      {" "}
+                      {/* Span columns for no data message */}
+                      No deadline extensions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <DeadlineExtension projectId= {project._id} onExtensionAdded={handleExtensionAdded} />
+          </div>
         </div>
       </div>
       {/* Add more project details as needed */}
