@@ -24,11 +24,11 @@ router.get('/', auth, async (req, res) => {
         })
         .populate('client', 'name');
     } else if (user.role === 'manager') {
-      projects = await Project.find({ manager: req.user.id })
+      projects = await Project.find({ "team.teamLeader": req.user.id })
         .populate('manager', 'name email')
         .populate('teamMembers', 'name email');
     } else {
-      projects = await Project.find({ teamMembers: req.user.id })
+      projects = await Project.find({ 'team.teamMember': req.user.id })
         .populate('manager', 'name email')
         .populate('teamMembers', 'name email');
     }
