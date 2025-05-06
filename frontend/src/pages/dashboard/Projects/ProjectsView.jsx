@@ -3,6 +3,7 @@ import ListDetailsPane from '../../../layouts/ListDetailsPane';
 import ProjectsList from './ProjectsList';
 import ProjectDetails from './ProjectDetails';
 import axios from 'axios';
+const token = localStorage.getItem('token')
 
 function ProjectsView() {
   const [projects, setProjects] = useState([]);
@@ -14,7 +15,6 @@ function ProjectsView() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const token = localStorage.getItem('token')
         setLoading(true);
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects`, {headers:{
             'x-auth-token': token
@@ -37,6 +37,14 @@ function ProjectsView() {
 
   const selectedProject = projects.find(p => p._id === selectedProjectId);
 
+  const handleAddProject = (newProject) => {
+    const response = axios.post(`${import.meta.env.VITE_API_URL}/projects`, newProject, {headers:{
+        'x-auth-token': localStorage.getItem('token')
+    }})
+    setProjects([...projects, newProject]);
+    setSelectedProjectId(newProject._id);
+  };
+
   if (loading) {
     return <div className="p-4">Loading projects...</div>;
   }
@@ -53,6 +61,7 @@ function ProjectsView() {
           projects={projects}
           onSelectProject={setSelectedProjectId}
           selectedProjectId={selectedProjectId}
+          onAddProject={handleAddProject}
         />
       }
       rightContent={

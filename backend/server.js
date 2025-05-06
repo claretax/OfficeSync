@@ -20,6 +20,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://rdmodels:YFpB8St0asdssd
 
 // Routes 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/contacts', require('./routes/contactRoutes'));
 app.use('/api/templates', require('./routes/templateRoutes'));

@@ -1,9 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import AddProjectOverlay from '../../../components/AddProjectOverlay';
 
 function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProject }) {
   const [isAddOverlayOpen, setIsAddOverlayOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [teams, setTeams] = useState([]);
+  const [clients, setClients] = useState([]);
+  
+  // Fetch teams and clients for the dropdown menus
+  useEffect(() => {
+    // Fetch teams
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/teams`);
+        if (response.status === 200) {
+          setTeams(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+      }
+    };
+
+    // Fetch clients
+    const fetchClients = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/clients`);
+        if (response.status === 200) {
+          setClients(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    };
+
+    if (isAddOverlayOpen) {
+      fetchTeams();
+      fetchClients();
+    }
+  }, [isAddOverlayOpen]);
   
   const filteredProjects = projects?.filter(project => 
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -32,6 +67,8 @@ function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProje
           isOpen={isAddOverlayOpen} 
           onClose={() => setIsAddOverlayOpen(false)} 
           onAddProject={handleAddProject}
+          teams={teams}
+          clients={clients}
         />
       </div>
     );
@@ -71,6 +108,8 @@ function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProje
         isOpen={isAddOverlayOpen} 
         onClose={() => setIsAddOverlayOpen(false)} 
         onAddProject={handleAddProject}
+        teams={teams}
+        clients={clients}
       />
     </div>
   );

@@ -66,7 +66,7 @@ function ProjectDetails({ project }) {
         )}
         <div className="flex flex-wrap justify-between items-center gap-2">
           <p>
-            <strong>Team Leader:</strong> {project.team.teamLeader.name}
+            <strong>Team Leader:</strong> {project?.team.teamLeader.name}
           </p>
           <div className="flex flex-row gap-2 justify-between items-center">
             <label className="block text-sm font-medium text-gray-700">
@@ -108,31 +108,21 @@ function ProjectDetails({ project }) {
           </div>
 
           <div className="overflow-x-auto h-96 shadow-lg">
-            {" "}
-            {/* Added overflow for smaller screens */}
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-              {" "}
-              {/* Added table styling */}
               <thead className="bg-red-300 text-white">
-                {" "}
-                {/* Header styling */}
                 <tr>
                   <th className="text-left p-2 uppercase font-semibold">
                     Updated At
-                  </th>{" "}
-                  {/* Header cell styling */}
+                  </th>
                   <th className="text-left p-2 uppercase font-semibold">
                     New Deadline
-                  </th>{" "}
-                  {/* Header cell styling */}
+                  </th>
                   <th className="text-left p-2 uppercase font-semibold">
                     Reason
-                  </th>{" "}
-                  {/* Header cell styling */}
+                  </th>
                   <th className="text-left p-2 uppercase font-semibold">
                     Category
-                  </th>{" "}
-                  {/* Header cell styling */}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -154,9 +144,7 @@ function ProjectDetails({ project }) {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="3" className="text-center p-2 text-gray-500">
-                      {" "}
-                      {/* Span columns for no data message */}
+                    <td colSpan="4" className="text-center p-2 text-gray-500">
                       No deadline extensions found.
                     </td>
                   </tr>
