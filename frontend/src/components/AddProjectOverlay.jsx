@@ -90,13 +90,12 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
     };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/projects`, projectData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
-        }
-      });
-      onAddProject(response.data);
+      // const response = await axios.post(`${import.meta.env.VITE_API_URL}/projects`, projectData, {
+      //   headers: {
+      //     'x-auth-token': token
+      //   }
+      // });
+      onAddProject(formData);
       // Reset form
       setFormData({
         name: '',
@@ -250,7 +249,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
                 onChange={(e) => setClientInput(e.target.value)}
                 className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Add a client ID"
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddClient();
@@ -314,7 +313,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
                 onChange={(e) => setTagInput(e.target.value)}
                 className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Add a tag"
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddTag();

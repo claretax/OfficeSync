@@ -59,9 +59,13 @@ function ProjectDetails({ project }) {
 
   useEffect(() => {
     if (project) {
+      setStartDate(formatDate(project.startDate));
+      setEndDateTeam(formatDate(project.endDateTeam));
+      setEndDateClient(formatDate(project.endDateClient));
       fetchExtensions();
     }
   }, [project]);
+  
 
   const handleExtensionAdded = (newExtension) => {
     fetchExtensions();
