@@ -3,21 +3,35 @@ import { useEffect } from "react";
 import axios from "axios";
 import DeadlineExtension from "../../../components/ui/DeadlineExtension";
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return isNaN(date.getTime()) ? "" : date.toISOString().split("T")[0];
+};
+
+const getDateDifferenceInDays = (date1, date2) => {
+  return Math.round((new Date(date1) - new Date(date2)) / (1000 * 60 * 60 * 24));
+};
+
 function ProjectDetails({ project }) {
   const [deadlineExtensions, setDeadlineExtensions] = useState([]);
-  const [startDate, setStartDate] = useState(
-    project ? new Date(project.startDate).toISOString().split("T")[0] : ""
-  );
-  const [endDate, setEndDate] = useState(
-    project ? new Date(project.endDate).toISOString().split("T")[0] : ""
-  );
+  const [startDate, setStartDate] = useState(formatDate(project?.startDate));
+  const [endDateTeam, setEndDateTeam] = useState(formatDate(project?.endDateTeam));
+  const [endDateClient, setEndDateClient] = useState(formatDate(project?.endDateClient));
+
+
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
     // Optionally, notify parent component or update backend here
     // e.g., onUpdateProject({ ...project, startDate: e.target.value });
   };
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
+  const handleEndDateTeamChange = (e) => {
+    setEndDateTeam(e.target.value);
+    // Optionally, notify parent component or update backend here
+    // e.g., onUpdateProject({ ...project, endDate: e.target.value });
+  };
+  const handleEndDateClientChange = (e) => {
+    setEndDateClient(e.target.value);
     // Optionally, notify parent component or update backend here
     // e.g., onUpdateProject({ ...project, endDate: e.target.value });
   };
@@ -25,7 +39,6 @@ function ProjectDetails({ project }) {
   if (!project) {
     return <p className="p-4 text-gray-600">Select a project from the list.</p>;
   }
-
   const fetchExtensions = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -81,18 +94,32 @@ function ProjectDetails({ project }) {
           </div>
           <div className="flex flex-row gap-2 justify-between items-center">
             <label className="block text-sm font-medium text-gray-700">
-              <strong>Start Date:</strong>
+              <strong>End Date(Team):</strong>
             </label>
             <input
               type="date"
-              value={endDate}
-              onChange={handleEndDateChange}
+              value={endDateTeam}
+              onChange={handleEndDateTeamChange}
+              className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
+            />
+          </div>
+          <div className="flex flex-row gap-2 justify-between items-center">
+            <label className="block text-sm font-medium text-gray-700">
+              <strong>End Date(Client):</strong>
+            </label>
+            <input
+              type="date"
+              value={endDateClient}
+              onChange={handleEndDateClientChange}
               className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
             />
           </div>
           <p>
-            <strong>Client:</strong> {project.client.name}
-          </p>
+  <strong>Clients:</strong> {project.clients.map((client, index) => (
+    <span key={index}>{client.name}-{client.email}, </span>
+  ))}
+</p>
+
           <p>
             <strong>Priority:</strong> {project.priority}
           </p>
@@ -135,7 +162,11 @@ function ProjectDetails({ project }) {
                         {extension.updatedAt.split("T")[0]}
                       </td>
                       <td className="p-2">
-                        {extension.newDeadline.split("T")[0]}
+                        {<td className="p-2">
+  {getDateDifferenceInDays(extension.newDeadline, extension.oldDeadline)} days
+</td>
+
+}
                       </td>
                       <td className="p-2">{extension.reason}</td>
                       <td className="p-2">{extension.category}</td>

@@ -19,7 +19,11 @@ const projectSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  endDate: {
+  endDateTeam:{
+    type:Date,
+    required:true
+  },
+  endDateClient: {
     type: Date,
     required: true
   },
@@ -33,10 +37,10 @@ const projectSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref : 'Team'
     },
-  client: {
+  clients: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  },
+  }],
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'critical'],

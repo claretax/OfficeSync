@@ -18,19 +18,33 @@ router.get('/', auth, async (req, res) => {
         .populate({
           path: 'team',
           populate: [
-            { path: 'teamLeader', select: 'name' },
-            { path: 'teamMembers', select: 'name' }
+            { path: 'teamLeader', select: 'name email' },
+            { path: 'teamMembers', select: 'name email' }
           ]
         })
-        .populate('client', 'name');
+        .populate('clients', 'name email');
     } else if (user.role === 'manager') {
-      projects = await Project.find({ "team.teamLeader": req.user.id })
-        .populate('manager', 'name email')
-        .populate('teamMembers', 'name email');
+      projects = await Project.find()
+        .populate({
+          path: 'team',
+          match: { teamLeader: req.user.id },
+          populate: [
+            { path: 'teamLeader', select: 'name email' },
+            { path: 'teamMembers', select: 'name email' }
+          ]
+        })
+        .populate('clients', 'name email');
     } else {
-      projects = await Project.find({ 'team.teamMember': req.user.id })
-        .populate('manager', 'name email')
-        .populate('teamMembers', 'name email');
+      projects = await Project.find()
+        .populate({
+          path: 'team',
+          match: { teamMembers: req.user.id },
+          populate: [
+            { path: 'teamLeader', select: 'name email' },
+            { path: 'teamMembers', select: 'name email' }
+          ]
+        })
+        .populate('clients', 'name email');
     }
 
     res.json(projects);
@@ -39,6 +53,7 @@ router.get('/', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
 
 // @route   POST api/projects
 // @desc    Create a project
@@ -54,9 +69,10 @@ router.post('/', auth, async (req, res) => {
       name,
       description,
       startDate,
-      endDate,
+      endDateTeam,
+      endDateClient,
       team,
-      client,
+      clients,
       priority,
       tags,
     } = req.body;
@@ -65,9 +81,10 @@ router.post('/', auth, async (req, res) => {
       name,
       description,
       startDate,
-      endDate,
+      endDateTeam,
+      endDateClient,
       team,
-      client,
+      clients,
       priority,
       tags,
       createdBy: req.user.id

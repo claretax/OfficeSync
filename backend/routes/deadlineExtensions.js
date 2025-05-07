@@ -48,20 +48,23 @@ router.post('/', auth,
   async (req, res) => {
     const {
       projectId,
-      newDeadline,
+      days,
       reason,
-      category
     } = req.body;
   try {
-    const newDeadlineDate = new Date(newDeadline);
-    if (isNaN(newDeadlineDate.getTime())) {
-      return res.status(400).json({ msg: 'Invalid newDeadline date' });
-    }
+    const daysToAdd = parseInt(days, 10);
+        if (isNaN(daysToAdd)) {
+            return res.status(400).json({ msg: 'Invalid number of days' });
+        }
 
     const project = await Project.findById(req.body.projectId);
     if (!project) {
       return res.status(404).json({ msg: 'Project not found' });
     }
+
+    const currentDeadline = project.endDateClient || new Date();
+    const extendedDeadline = new Date(currentDeadline);
+    extendedDeadline.setDate(extendedDeadline.getDate() + daysToAdd);
 
     // Check if user is admin
     const user = await User.findById(req.user.id);
@@ -72,12 +75,11 @@ router.post('/', auth,
     const newExtension = new DeadlineExtension({
       project: projectId,
       requestedBy: req.user.id,
-      oldDeadline: project.endDate,
-       newDeadline: newDeadlineDate,
-      reason,
-      category
+      oldDeadline: project.endDateClient,
+       newDeadline: extendedDeadline,
+      reason
     });
-    project.endDate = newDeadlineDate;
+    project.endDateClient = extendedDeadline;
     await Promise.all([newExtension.save(), project.save()]);
 
     res.status(200).json({

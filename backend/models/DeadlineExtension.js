@@ -18,11 +18,6 @@ const deadlineExtensionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  category: {
-    type: String,
-    enum: ['client_delay', 'resource_issue', 'scope_change', 'technical_issue', 'other'],
-    required: true
-  },
   requestedBy:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
