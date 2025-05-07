@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 const token = localStorage.getItem('token');
+import Select from 'react-select';
 
 function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
   const [formData, setFormData] = useState({
@@ -116,6 +117,12 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
       // Handle error appropriately
     }
   };
+
+  const clientOptions = clients.map(client => ({
+    value: client._id,
+    label: `${client.name} (${client.email})`
+  }));
+
 
   if (!isOpen) return null;
 
@@ -238,49 +245,25 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
           
           {/* Clients */}
           <div className="md:col-span-2">
-            <label htmlFor="clients" className="block text-sm font-medium text-gray-700 mb-1">
-              Clients
-            </label>
-            <div className="flex items-center">
-              <input
-                type="text"
-                id="clientInput"
-                value={clientInput}
-                onChange={(e) => setClientInput(e.target.value)}
-                className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Add a client ID"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddClient();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleAddClient}
-                className="p-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
-              >
-                Add
-              </button>
-            </div>
-            
-            {/* Display clients */}
-            <div className="flex flex-wrap gap-2 mt-2">
-              {formData.clients.map((clientId, index) => (
-                <div key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
-                  <span>{clientId}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveClient(clientId)}
-                    className="ml-1 text-green-800 hover:text-green-900"
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+  <label htmlFor="clients" className="block text-sm font-medium text-gray-700 mb-1">
+    Clients
+  </label>
+  <Select
+    isMulti
+    options={clientOptions}
+    value={clientOptions.filter(option => formData.clients.includes(option.value))}
+    onChange={(selectedOptions) => {
+      const selectedIds = selectedOptions.map(option => option.value);
+      setFormData(prev => ({
+        ...prev,
+        clients: selectedIds
+      }));
+    }}
+    className="react-select-container"
+    classNamePrefix="react-select"
+    placeholder="Search and select clients..."
+  />
+</div>
           
           {/* Priority */}
           <div>
