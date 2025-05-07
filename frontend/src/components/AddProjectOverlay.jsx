@@ -1,30 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+const token = localStorage.getItem('token');
 
 function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     startDate: '',
-    endDate: '',
+    endDateTeam: '',
+    endDateClient: '',
     team: '',
-    client: '',
+    clients: [],
     priority: 'medium',
     tags: []
   });
-  
+
   const [tagInput, setTagInput] = useState('');
+  const [clientInput, setClientInput] = useState('');
 
   useEffect(() => {
-    // Set default dates when the overlay opens
     if (isOpen) {
       const today = new Date().toISOString().split('T')[0];
       const nextYear = new Date();
       nextYear.setFullYear(nextYear.getFullYear() + 1);
-      
+      const nextYearDate = nextYear.toISOString().split('T')[0];
+
       setFormData(prev => ({
         ...prev,
         startDate: today,
-        endDate: nextYear.toISOString().split('T')[0]
+        endDateTeam: nextYearDate,
+        endDateClient: nextYearDate
       }));
     }
   }, [isOpen]);
@@ -38,10 +43,11 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
   };
 
   const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+    const trimmedTag = tagInput.trim();
+    if (trimmedTag && !formData.tags.includes(trimmedTag)) {
       setFormData(prev => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...prev.tags, trimmedTag]
       }));
       setTagInput('');
     }
@@ -54,32 +60,62 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleAddClient = () => {
+    const trimmedClient = clientInput.trim();
+    if (trimmedClient && !formData.clients.includes(trimmedClient)) {
+      setFormData(prev => ({
+        ...prev,
+        clients: [...prev.clients, trimmedClient]
+      }));
+      setClientInput('');
+    }
+  };
+
+  const handleRemoveClient = (clientToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      clients: prev.clients.filter(client => client !== clientToRemove)
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
-    
-    // Format dates for API
+
     const projectData = {
       ...formData,
       startDate: new Date(formData.startDate).toISOString(),
-      endDate: new Date(formData.endDate).toISOString()
+      endDateTeam: new Date(formData.endDateTeam).toISOString(),
+      endDateClient: new Date(formData.endDateClient).toISOString()
     };
-    
-    onAddProject(projectData);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      description: '',
-      startDate: '',
-      endDate: '',
-      team: '',
-      client: '',
-      priority: 'medium',
-      tags: []
-    });
-    setTagInput('');
-    onClose();
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/projects`, projectData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        }
+      });
+      onAddProject(response.data);
+      // Reset form
+      setFormData({
+        name: '',
+        description: '',
+        startDate: '',
+        endDateTeam: '',
+        endDateClient: '',
+        team: '',
+        clients: [],
+        priority: 'medium',
+        tags: []
+      });
+      setTagInput('');
+      setClientInput('');
+      onClose();
+    } catch (error) {
+      console.error('Error adding project:', error);
+      // Handle error appropriately
+    }
   };
 
   if (!isOpen) return null;
@@ -147,16 +183,32 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
             />
           </div>
           
-          {/* End Date */}
+          {/* End Date Team */}
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
-              End Date*
+            <label htmlFor="endDateTeam" className="block text-sm font-medium text-gray-700 mb-1">
+              End Date (Team)*
             </label>
             <input
               type="date"
-              id="endDate"
-              name="endDate"
-              value={formData.endDate}
+              id="endDateTeam"
+              name="endDateTeam"
+              value={formData.endDateTeam}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          {/* End Date Client */}
+          <div>
+            <label htmlFor="endDateClient" className="block text-sm font-medium text-gray-700 mb-1">
+              End Date (Client)*
+            </label>
+            <input
+              type="date"
+              id="endDateClient"
+              name="endDateClient"
+              value={formData.endDateClient}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -185,26 +237,50 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
             </select>
           </div>
           
-          {/* Client */}
-          <div>
-            <label htmlFor="client" className="block text-sm font-medium text-gray-700 mb-1">
-              Client*
+          {/* Clients */}
+          <div className="md:col-span-2">
+            <label htmlFor="clients" className="block text-sm font-medium text-gray-700 mb-1">
+              Clients
             </label>
-            <select
-              id="client"
-              name="client"
-              value={formData.client}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="">Select a client</option>
-              {clients?.map(client => (
-                <option key={client._id} value={client._id}>
-                  {client.name}
-                </option>
+            <div className="flex items-center">
+              <input
+                type="text"
+                id="clientInput"
+                value={clientInput}
+                onChange={(e) => setClientInput(e.target.value)}
+                className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Add a client ID"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddClient();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleAddClient}
+                className="p-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
+              >
+                Add
+              </button>
+            </div>
+            
+            {/* Display clients */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              {formData.clients.map((clientId, index) => (
+                <div key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
+                  <span>{clientId}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveClient(clientId)}
+                    className="ml-1 text-green-800 hover:text-green-900"
+                  >
+                    &times;
+                  </button>
+                </div>
               ))}
-            </select>
+            </div>
           </div>
           
           {/* Priority */}
@@ -253,7 +329,6 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
                 Add
               </button>
             </div>
-            
             {/* Display tags */}
             <div className="flex flex-wrap gap-2 mt-2">
               {formData.tags.map((tag, index) => (
@@ -270,19 +345,12 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
               ))}
             </div>
           </div>
-          
-          {/* Submit buttons */}
-          <div className="md:col-span-2 flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-            >
-              Cancel
-            </button>
+
+          {/* Submit Button */}
+          <div className="md:col-span-2 flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
             >
               Add Project
             </button>
