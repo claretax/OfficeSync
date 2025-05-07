@@ -37,13 +37,22 @@ function ProjectsView() {
 
   const selectedProject = projects.find(p => p._id === selectedProjectId);
 
-  const handleAddProject = (newProject) => {
-    const response = axios.post(`${import.meta.env.VITE_API_URL}/projects`, newProject, {headers:{
-        'x-auth-token': localStorage.getItem('token')
-    }})
-    setProjects([...projects, newProject]);
-    setSelectedProjectId(newProject._id);
+  const handleAddProject = async (newProject) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/projects`, newProject, {
+        headers: {
+          'x-auth-token': localStorage.getItem('token')
+        }
+      });
+  
+      const addedProject = response.data;
+      setProjects([...projects, addedProject]);
+      setSelectedProjectId(addedProject._id);
+    } catch (error) {
+      console.error("Failed to add project:", error);
+    }
   };
+  
 
   if (loading) {
     return <div className="p-4">Loading projects...</div>;

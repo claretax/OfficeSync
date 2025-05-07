@@ -74,7 +74,7 @@ function ProjectDetails({ project }) {
   return (
     <div>
       <div className="">
-        <h2 className="text-2xl font-bold mb-4">{project.name}</h2>
+        <h2 className="text-2xl font-bold mb-4">{project?.name}</h2>
         {project.description && (
           <p className="mb-4 border-b-2 border-blue-300">
             {project.description}
@@ -82,7 +82,7 @@ function ProjectDetails({ project }) {
         )}
         <div className="flex flex-wrap justify-between items-center gap-2">
           <p>
-            <strong>Team Leader:</strong> {project?.team.teamLeader.name}
+            <strong>Team Leader:</strong> {project?.team.teamLeader?.name || "Not Assigned"}
           </p>
           <div className="flex flex-row gap-2 justify-between items-center">
             <label className="block text-sm font-medium text-gray-700">
@@ -120,7 +120,7 @@ function ProjectDetails({ project }) {
           </div>
           <p>
   <strong>Clients:</strong> {project.clients.map((client, index) => (
-    <span key={index}>{client.name}-{client.email}, </span>
+    <span key={index}>{client?.name}-{client.email}, </span>
   ))}
 </p>
 
@@ -165,13 +165,11 @@ function ProjectDetails({ project }) {
                       <td className="p-2">
                         {extension.updatedAt.split("T")[0]}
                       </td>
-                      <td className="p-2">
+                      
                         {<td className="p-2">
   {getDateDifferenceInDays(extension.newDeadline, extension.oldDeadline)} days
 </td>
-
 }
-                      </td>
                       <td className="p-2">{extension.reason}</td>
                       <td className="p-2">{extension.category}</td>
                     </tr>
