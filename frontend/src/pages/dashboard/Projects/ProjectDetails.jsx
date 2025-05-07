@@ -48,11 +48,10 @@ function ProjectDetails({ project }) {
     if (project) {
       fetchExtensions();
     }
-  }, [project, endDate]);
+  }, [project]);
 
   const handleExtensionAdded = (newExtension) => {
     fetchExtensions();
-      setEndDate(newExtension.newDeadline);
   };
 
   return (
@@ -107,7 +106,7 @@ function ProjectDetails({ project }) {
             <h3 className="text-xl font-semibold">Timeline Extensions</h3>
           </div>
 
-          <div className="overflow-x-auto h-96 shadow-lg">
+          <div className="overflow-x-auto max-h-96 shadow-lg">
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
               <thead className="bg-red-300 text-white">
                 <tr>
@@ -151,8 +150,8 @@ function ProjectDetails({ project }) {
                 )}
               </tbody>
             </table>
-            <DeadlineExtension projectId= {project._id} onExtensionAdded={handleExtensionAdded} />
           </div>
+          <DeadlineExtension projectId= {project._id} onExtensionAdded={handleExtensionAdded} />
         </div>
       </div>
       {/* Add more project details as needed */}

@@ -3,17 +3,14 @@ import axios from 'axios'
 
 function DeadlineExtension({projectId, onExtensionAdded}) {
     const [formData, setFormData] = useState({
-        projectId: projectId,
         newDeadline:"",
         reason:"",
         category:""
     })
-
-    console.log(projectId)
     const handleSubmit = async(e)=>{
         e.preventDefault()
         const token = localStorage.getItem('token')
-        const response =await axios.post(`${import.meta.env.VITE_API_URL}/deadline-extensions`,formData, {
+        const response =await axios.post(`${import.meta.env.VITE_API_URL}/deadline-extensions`,{...formData, projectId}, {
             headers:{
                 'x-auth-token': token
             }
@@ -31,7 +28,7 @@ function DeadlineExtension({projectId, onExtensionAdded}) {
     }
   return (
     <div>
-      <form onSubmit={handleSubmit} className="flex justify-between mt-4 p-4 bg-gray-50 border-4 border-green-500 rounded-lg shadow-sm">
+      <form onSubmit={handleSubmit} className="flex justify-between mt-4 p-4 bg-white rounded-lg shadow-md">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex flex-col justify-between">
             <label className="block text-sm font-medium text-gray-700 mb-1">
