@@ -150,7 +150,16 @@ function ProjectDetails({ project }) {
               columns={[
                 {
                   header: "Updated At",
-                  accessor: (row) => row.updatedAt.split("T")[0],
+                  accessor: (row) => {
+                    const date = new Date(row.updatedAt);
+                    return isNaN(date.getTime())
+                      ? ""
+                      : date.toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "2-digit",
+                        }).replace(/ /g, " ");
+                  },
                 },
                 {
                   header: "Days",
