@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import DeadlineExtension from "../../../components/ui/DeadlineExtension";
+import Table from "../../../components/ui/Table";
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
@@ -10,15 +11,20 @@ const formatDate = (dateStr) => {
 };
 
 const getDateDifferenceInDays = (date1, date2) => {
-  return Math.round((new Date(date1) - new Date(date2)) / (1000 * 60 * 60 * 24));
+  return Math.round(
+    (new Date(date1) - new Date(date2)) / (1000 * 60 * 60 * 24)
+  );
 };
 
 function ProjectDetails({ project }) {
   const [deadlineExtensions, setDeadlineExtensions] = useState([]);
   const [startDate, setStartDate] = useState(formatDate(project?.startDate));
-  const [endDateTeam, setEndDateTeam] = useState(formatDate(project?.endDateTeam));
-  const [endDateClient, setEndDateClient] = useState(formatDate(project?.endDateClient));
-
+  const [endDateTeam, setEndDateTeam] = useState(
+    formatDate(project?.endDateTeam)
+  );
+  const [endDateClient, setEndDateClient] = useState(
+    formatDate(project?.endDateClient)
+  );
 
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
@@ -55,7 +61,6 @@ function ProjectDetails({ project }) {
       console.error("Failed to fetch deadline extensions:", error);
     }
   };
-  
 
   useEffect(() => {
     if (project) {
@@ -65,7 +70,6 @@ function ProjectDetails({ project }) {
       fetchExtensions();
     }
   }, [project]);
-  
 
   const handleExtensionAdded = (newExtension) => {
     fetchExtensions();
@@ -82,7 +86,8 @@ function ProjectDetails({ project }) {
         )}
         <div className="flex flex-wrap justify-between items-center gap-2">
           <p>
-            <strong>Team Leader:</strong> {project?.team.teamLeader?.name || "Not Assigned"}
+            <strong>Team Leader:</strong>{" "}
+            {project?.team.teamLeader?.name || "Not Assigned"}
           </p>
           <div className="flex flex-row gap-2 justify-between items-center">
             <label className="block text-sm font-medium text-gray-700">
@@ -119,10 +124,13 @@ function ProjectDetails({ project }) {
             />
           </div>
           <p>
-  <strong>Clients:</strong> {project.clients.map((client, index) => (
-    <span key={index}>{client?.name}-{client.email}, </span>
-  ))}
-</p>
+            <strong>Clients:</strong>{" "}
+            {project.clients.map((client, index) => (
+              <span key={index}>
+                {client?.name}-{client.email},{" "}
+              </span>
+            ))}
+          </p>
 
           <p>
             <strong>Priority:</strong> {project.priority}
@@ -138,53 +146,30 @@ function ProjectDetails({ project }) {
           </div>
 
           <div className="overflow-x-auto max-h-96 shadow-lg">
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-red-300 text-white">
-                <tr>
-                  <th className="text-left p-2 uppercase font-semibold">
-                    Updated At
-                  </th>
-                  <th className="text-left p-2 uppercase font-semibold">
-                    New Deadline
-                  </th>
-                  <th className="text-left p-2 uppercase font-semibold">
-                    Reason
-                  </th>
-                  <th className="text-left p-2 uppercase font-semibold">
-                    Category
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {deadlineExtensions.length > 0 ? (
-                  deadlineExtensions.map((extension, index) => (
-                    <tr
-                      key={index}
-                      className="border-b border-gray-200 hover:bg-gray-100"
-                    >
-                      <td className="p-2">
-                        {extension.updatedAt.split("T")[0]}
-                      </td>
-                      
-                        {<td className="p-2">
-  {getDateDifferenceInDays(extension.newDeadline, extension.oldDeadline)} days
-</td>
-}
-                      <td className="p-2">{extension.reason}</td>
-                      <td className="p-2">{extension.category}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" className="text-center p-2 text-gray-500">
-                      No deadline extensions found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <Table
+              columns={[
+                {
+                  header: "Updated At",
+                  accessor: (row) => row.updatedAt.split("T")[0],
+                },
+                {
+                  header: "Days",
+                  accessor: (row) =>
+                    `${getDateDifferenceInDays(
+                      row.newDeadline,
+                      row.oldDeadline
+                    )}`,
+                },
+                { header: "Reason", accessor: (row) => row.reason },
+              ]}
+              data={deadlineExtensions}
+              noDataMessage="No deadline extensions found."
+            />
           </div>
-          <DeadlineExtension projectId= {project._id} onExtensionAdded={handleExtensionAdded} />
+          <DeadlineExtension
+            projectId={project._id}
+            onExtensionAdded={handleExtensionAdded}
+          />
         </div>
       </div>
       {/* Add more project details as needed */}
