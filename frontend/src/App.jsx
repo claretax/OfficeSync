@@ -4,7 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import NewProjectForm from "./components/NewProjectForm";
 import Leads from "./pages/Leads";
-import NewLeadForm from "./components/NewLeadForm";
+import AddClient from "./components/ui/AddClient";
 import HomePage from "./pages/HomePage";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
@@ -18,6 +18,7 @@ function App() {
         {/* <Sidebar /> */}
         <main className="flex-1 p-0 bg-gray-100">
           <Routes>
+            <Route path="/client" element={<AddClient/>} />
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
