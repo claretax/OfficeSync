@@ -36,7 +36,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
       }
     };
     fetchClients();
-  }, [clients])
+  }, [])
 
   useEffect(() => {
     if (isOpen) {
