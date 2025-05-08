@@ -39,7 +39,7 @@ const projectSchema = new mongoose.Schema({
     },
   clients: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'Client'
   }],
   priority: {
     type: String,
