@@ -4,11 +4,6 @@ import Sidebar from '../components/layout/Sidebar';
 import { useNavigate } from 'react-router-dom';
 
 const DashboardLayout = () => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate('/dashboard/projects')
-  })
-
   return (
     <div className="flex h-screen overflow-hidden">
   {/* Sidebar */}
