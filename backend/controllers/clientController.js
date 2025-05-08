@@ -1,4 +1,4 @@
-const Client = require('../models/client');
+const Client = require('../models/Client');
 
 // Create a new client
 const createClient = async (req, res) => {
