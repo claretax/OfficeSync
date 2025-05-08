@@ -6,8 +6,9 @@ import { Label } from '@radix-ui/react-label';
 import { Button } from '@/components/ui/button';
 import AddTeam from './forms/AddTeam';
 import AddClient from './forms/AddClient';
+import { getClients } from '@/api/clients';
 
-function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
+function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -24,6 +25,18 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
   const [clientInput, setClientInput] = useState('');
   const [openTeamDialog, setOpenTeamDialog] = useState(false);
   const [openClientDialog, setOpenClientDialog] = useState(false);
+  const [clients, setClients] = useState([]);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        setClients(await getClients());
+      }catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    };
+    fetchClients();
+  }, [clients])
 
   useEffect(() => {
     if (isOpen) {
@@ -67,23 +80,12 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
     }));
   };
 
-  const handleAddClient = () => {
-    const trimmedClient = clientInput.trim();
-    if (trimmedClient && !formData.clients.includes(trimmedClient)) {
-      setFormData(prev => ({
-        ...prev,
-        clients: [...prev.clients, trimmedClient]
-      }));
-      setClientInput('');
+  const handleAddClient = (newClient) => {
+    if (!formData.clients.includes(newClient._id)) {
+      setClients(prev => [...prev, newClient]);
+      setOpenClientDialog(false);
     }
-  };
-
-  const handleRemoveClient = (clientToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      clients: prev.clients.filter(client => client !== clientToRemove)
-    }));
-  };
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -271,7 +273,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
                 classNamePrefix="react-select"
                 placeholder="Search and select clients..."
               />
-              <Button type="button" onClick={() => setOpenClientDialog(true)}>
+              <Button type="button" onAddClient = {handleAddClient} onClick={() => setOpenClientDialog(true)}>
                 Add New
               </Button>
             </div>

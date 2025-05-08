@@ -8,13 +8,13 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 const token = localStorage.getItem('token');
 
-const ClientForm = ({ onClose }) => {
+const ClientForm = ({ onClose, handleAddClient }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     address: '',
-    companyName: '',
+    companyName: '',  
     contactPerson: '',
     industry: '',
     taxId: '',
