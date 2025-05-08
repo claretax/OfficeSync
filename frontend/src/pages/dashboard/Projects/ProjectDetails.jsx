@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import DeadlineExtension from "../../../components/ui/DeadlineExtension";
-import Table from "../../../components/ui/Table";
+import DeadlineExtension from "../../../components/forms/DeadlineExtension";
+import Table from "../../../components/tables/Table";
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
