@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 const token = localStorage.getItem('token');
 
-const ClientForm = () => {
+const ClientForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,11 +33,10 @@ const ClientForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/clients`,formData , {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/clients`, formData, {
         headers: {'x-auth-token': token},
       });
       if (response.status === 201) {
-        // Reset form
         setFormData({
           name: '',
           email: '',
@@ -51,6 +50,7 @@ const ClientForm = () => {
           notes: ''
         });
         toast.success('Client added successfully');
+        onClose(); // Close form after successful submission
       } else {
         toast.error(response.data.error || 'Something went wrong');
         console.error('Error:', await response.data);
@@ -64,6 +64,17 @@ const ClientForm = () => {
   return (
     <Card className="max-w-2xl mx-auto mt-8 p-6 shadow-lg rounded-2xl">
       <CardContent>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Add New Client</h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
           <div>
             <Label>Name</Label>

@@ -7,7 +7,7 @@ import AddTeamLeaderDialog from '@/components/dialogs/AddTeamLeaderDialog';
 import AddTeamMemberDialog from '@/components/dialogs/AddTeamMemberDialog';
 import { getUsersByRole } from '@/api/users';
 
-const AddTeam = () => {
+const AddTeam = ({ onClose }) => {
   const [formData, setFormData] = useState({
     name: 'New Team',
     teamLeader: '',
@@ -65,7 +65,8 @@ const AddTeam = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        console.log(formData);
+      console.log(formData);
+      onClose(); // Close dialog after submission
     } catch (error) {
       console.error('Network error:', error);
     }
@@ -73,6 +74,17 @@ const AddTeam = () => {
 
   return (
     <Card className="max-w-2xl mx-auto mt-8 p-6 shadow-lg rounded-2xl">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Create New Team</h2>
+        <button 
+          onClick={onClose}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
           <div>

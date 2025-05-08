@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 const token = localStorage.getItem('token');
 import Select from 'react-select';
+import { Label } from '@radix-ui/react-label';
+import { Button } from '@/components/ui/button';
+import AddTeam from './forms/AddTeam';
+import AddClient from './forms/AddClient';
 
 function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
   const [formData, setFormData] = useState({
@@ -18,6 +22,8 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
 
   const [tagInput, setTagInput] = useState('');
   const [clientInput, setClientInput] = useState('');
+  const [openTeamDialog, setOpenTeamDialog] = useState(false);
+  const [openClientDialog, setOpenClientDialog] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -131,7 +137,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Add New Project</h2>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -140,7 +146,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
             </svg>
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Project Name */}
           <div className="md:col-span-2">
@@ -157,7 +163,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
               required
             />
           </div>
-          
+
           {/* Description */}
           <div className="md:col-span-2">
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
@@ -172,7 +178,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
               rows="3"
             />
           </div>
-          
+
           {/* Start Date */}
           <div>
             <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
@@ -188,7 +194,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
               required
             />
           </div>
-          
+
           {/* End Date Team */}
           <div>
             <label htmlFor="endDateTeam" className="block text-sm font-medium text-gray-700 mb-1">
@@ -220,51 +226,57 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
               required
             />
           </div>
-          
+
           {/* Team */}
           <div>
-            <label htmlFor="team" className="block text-sm font-medium text-gray-700 mb-1">
-              Team*
-            </label>
-            <select
-              id="team"
-              name="team"
-              value={formData.team}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="">Select a team</option>
-              {teams?.map(team => (
-                <option key={team._id} value={team._id}>
-                  {team.name}
-                </option>
-              ))}
-            </select>
+            <Label>Team*</Label>
+            <div className="flex gap-2">
+              <select
+                id="team"
+                name="team"
+                value={formData.team}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">Select a team</option>
+                {teams.map(team => (
+                  <option key={team._id} value={team._id}>
+                    {team.name}
+                  </option>
+                ))}
+              </select>
+              <Button type="button" onClick={() => setOpenTeamDialog(true)}>
+                Add New
+              </Button>
+            </div>
           </div>
-          
+
           {/* Clients */}
           <div className="md:col-span-2">
-  <label htmlFor="clients" className="block text-sm font-medium text-gray-700 mb-1">
-    Clients
-  </label>
-  <Select
-    isMulti
-    options={clientOptions}
-    value={clientOptions.filter(option => formData.clients.includes(option.value))}
-    onChange={(selectedOptions) => {
-      const selectedIds = selectedOptions.map(option => option.value);
-      setFormData(prev => ({
-        ...prev,
-        clients: selectedIds
-      }));
-    }}
-    className="react-select-container"
-    classNamePrefix="react-select"
-    placeholder="Search and select clients..."
-  />
-</div>
-          
+            <Label>Clients</Label>
+            <div className="flex gap-2">
+              <Select
+                isMulti
+                options={clientOptions}
+                value={clientOptions.filter(option => formData.clients.includes(option.value))}
+                onChange={(selectedOptions) => {
+                  const selectedIds = selectedOptions.map(option => option.value);
+                  setFormData(prev => ({
+                    ...prev,
+                    clients: selectedIds
+                  }));
+                }}
+                className="react-select-container w-full"
+                classNamePrefix="react-select"
+                placeholder="Search and select clients..."
+              />
+              <Button type="button" onClick={() => setOpenClientDialog(true)}>
+                Add New
+              </Button>
+            </div>
+          </div>
+
           {/* Priority */}
           <div>
             <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
@@ -282,7 +294,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
               <option value="high">High</option>
             </select>
           </div>
-          
+
           {/* Tags */}
           <div className="md:col-span-2">
             <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
@@ -339,6 +351,22 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams, clients }) {
           </div>
         </form>
       </div>
+      {/* Add Team Dialog */
+        openTeamDialog && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <AddTeam onClose={() => setOpenTeamDialog(false)} />
+            </div>
+          </div>
+        )}
+      {/* Add Team Dialog */
+        openClientDialog && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <AddClient onClose={() => setOpenClientDialog(false)} />
+            </div>
+          </div>
+        )}
     </div>
   );
 }
