@@ -8,6 +8,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import ProjectsView from "./pages/dashboard/Projects/ProjectsView";
 import { ToastContainer } from "react-toastify";
 import Users from "./pages/dashboard/users/Users";
+import AddTeam from "./components/forms/AddTeam";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <main className="flex-1 p-0 bg-gray-100">
           <Routes>
             <Route path="/client" element={<AddClient/>} />
+            <Route path="/team" element={<AddTeam/>} />
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

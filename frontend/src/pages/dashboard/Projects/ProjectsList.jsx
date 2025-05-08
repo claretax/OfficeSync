@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddProjectOverlay from '../../../components/AddProjectOverlay';
+import { getClients } from '@/api/clients';
 
 function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProject }) {
   const [isAddOverlayOpen, setIsAddOverlayOpen] = useState(false);
@@ -25,10 +26,7 @@ function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProje
     // Fetch clients
     const fetchClients = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/clients`);
-        if (response.status === 200) {
-          setClients(response.data);
-        }
+          setClients(await getClients());
       } catch (error) {
         console.error('Error fetching clients:', error);
       }

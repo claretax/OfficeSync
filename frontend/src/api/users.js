@@ -9,6 +9,17 @@ const getUsers = async () => {
     return [];
   }
 }
+const getTeamLeaders = async () => {
+  try {
+    const response = await axios(`${API_URL}/users`);
+    const teamLeaders = response.data.filter(user => user.role === 'project_lead');
+    return teamLeaders;
+  } catch (error) {
+    return [];
+  }
+}
+const getTeamMembers = async () => {
+  
+}
 
-
-export { getUsers };
+export { getUsers, getTeamLeaders };
