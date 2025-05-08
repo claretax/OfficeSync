@@ -1,8 +1,8 @@
 const User = require('../models/User')
 
-const getClients = async (req, res) =>{
+const getUsers = async (req, res) =>{
     try {
-        const user = await User.find({role: "client"})
+        const user = await User.find({})
         if(!user){
             return res.status(404).json({error:"Clients not found"})
         }
@@ -13,4 +13,4 @@ const getClients = async (req, res) =>{
     }
 }
 
-module.exports = {getClients}
+module.exports = {getUsers}

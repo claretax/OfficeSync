@@ -7,6 +7,7 @@ import Signup from "./components/auth/Signup";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProjectsView from "./pages/dashboard/Projects/ProjectsView";
 import { ToastContainer } from "react-toastify";
+import Users from "./pages/dashboard/users/Users";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="sms-stats" element={<SmsDashboard />} />
               <Route index element={<ProjectsView />} />
               <Route path="projects" element={<ProjectsView />} />
+              <Route path="users" element={<Users />} />
             </Route>
           </Routes>
         </main>
