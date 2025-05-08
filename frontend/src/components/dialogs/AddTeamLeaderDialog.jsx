@@ -28,12 +28,10 @@ const AddTeamLeaderDialog = ({ open, onOpenChange, onAddLeader }) => {
       if (user) {
       onAddLeader(user);
       onOpenChange(false);
-      toast.success('Team leader added successfully');
       }else{
         toast.error('Failed to add team leader');
       }
     } catch (error) {
-      toast.error('Failed to add team leader');
       console.error('Network error:', error);
     }
   };

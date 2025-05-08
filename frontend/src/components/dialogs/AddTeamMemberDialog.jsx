@@ -25,7 +25,8 @@ const AddTeamLeaderDialog = ({ open, onOpenChange, onAddMember }) => {
   const handleSubmit = async () => {
     try {
       const user = await addUser(newUser);
-      if (user.status === 201) {
+      console.log(user);
+      if (user._id) {
         onAddMember(user);
         onOpenChange(false);
       }

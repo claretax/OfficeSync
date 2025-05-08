@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import AddTeamLeaderDialog from '@/components/dialogs/AddTeamLeaderDialog';
 import AddTeamMemberDialog from '@/components/dialogs/AddTeamMemberDialog';
 import { getUsersByRole } from '@/api/users';
+import Select from 'react-select';
 
 const AddTeam = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -72,6 +73,12 @@ const AddTeam = ({ onClose }) => {
     }
   };
 
+  // Convert members to Select options
+  const memberOptions = members.map(member => ({
+    value: member._id,
+    label: member.name
+  }));
+
   return (
     <Card className="max-w-2xl mx-auto mt-8 p-6 shadow-lg rounded-2xl">
       <div className="flex justify-between items-center mb-4">
@@ -120,19 +127,22 @@ const AddTeam = ({ onClose }) => {
           <div>
             <Label>Team Members</Label>
             <div className="flex gap-2">
-              <select
-                multiple
-                name="teamMembers"
-                value={formData.teamMembers}
-                onChange={handleTeamMembersChange}
-                className="w-full border rounded px-2 py-2"
-              >
-                {members.map((user) => (
-                  <option key={user._id} value={user._id}>
-                    {user.name}
-                  </option>
-                ))}
-              </select>
+              <Select
+                isMulti
+                options={memberOptions}
+                value={memberOptions.filter(option => 
+                  formData.teamMembers.includes(option.value)
+                )}
+                onChange={(selectedOptions) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    teamMembers: selectedOptions.map(option => option.value)
+                  }));
+                }}
+                className="react-select-container flex-grow"
+                classNamePrefix="react-select"
+                placeholder="Search and select team members..."
+              />
               <Button type="button" onClick={() => setOpenMemberDialog(true)}>
                 Add New
               </Button>
