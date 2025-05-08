@@ -3,13 +3,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { toast } from 'react-toastify';
+import { addUser } from '@/api/users';
 
-const AddTeamLeaderDialog = ({ open, onOpenChange, onAddLeader }) => {
+const AddTeamLeaderDialog = ({ open, onOpenChange, onAddMember }) => {
   const [newUser, setNewUser] = React.useState({
     name: '',
     phone: '',
     email: '',
-    password: ''
+    role: 'employee'
   });
 
   const handleChange = (e) => {
@@ -22,9 +24,15 @@ const AddTeamLeaderDialog = ({ open, onOpenChange, onAddLeader }) => {
 
   const handleSubmit = async () => {
     try {
-      
+      const user = await addUser(newUser);
+      if (user.status === 201) {
+        onAddMember(user);
+        onOpenChange(false);
+      }
     } catch (error) {
       console.error('Network error:', error);
+    }finally {
+      onOpenChange(false);
     }
   };
 

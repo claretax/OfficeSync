@@ -19,7 +19,17 @@ const addUser = async (req, res) =>{
         if(!name || !email || !phone, !role){
             return res.status(400).json({error:"All fields are required"})
         }
-        const user = await User.create({name, email, phone, role})
+        const existingUser = await User.findOne({$or:[{email}, {phone}]})
+        if(existingUser){
+            return res.status(400).json({error:"User already exists"})
+        }
+        const newUser = new User({
+            name,
+            email,
+            phone,
+            role
+        })
+        const user = await newUser.save();
         res.status(201).json(user);
     }
     catch(error){

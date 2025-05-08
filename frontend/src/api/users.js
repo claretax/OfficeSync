@@ -1,14 +1,23 @@
 import { API_URL } from "@/constants";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const addUser = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/users`, userData);
+    if (response.status === 201) {
+      toast.success('User added successfully');
+    }
     return response.data;
   } catch (error) {
-    return null;
+    if (error.response && error.response.data) {
+      toast.error(error.response.data.error);
+      return error.response.data;
+    }
+    return { error: 'Something went wrong' };
   }
-}
+};
+
 
 const getUsers = async () => {
   try {
