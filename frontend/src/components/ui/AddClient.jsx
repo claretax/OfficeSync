@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 const token = localStorage.getItem('token');
 
 const ClientForm = () => {
@@ -31,13 +32,11 @@ const ClientForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/clients`,formData , {
         headers: {'x-auth-token': token},
       });
-      if (response) {
-        console.log('Client saved:', response.data);
+      if (response.status === 201) {
         // Reset form
         setFormData({
           name: '',
@@ -51,10 +50,13 @@ const ClientForm = () => {
           status: 'active',
           notes: ''
         });
+        toast.success('Client added successfully');
       } else {
+        toast.error(response.data.error || 'Something went wrong');
         console.error('Error:', await response.data);
       }
     } catch (error) {
+      toast.error(error.response.data.error || 'Something went wrong');
       console.error('Network error:', error);
     }
   };
