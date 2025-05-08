@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import AddTeamLeaderDialog from '@/components/dialogs/AddTeamLeaderDialog';
 import AddTeamMemberDialog from '@/components/dialogs/AddTeamMemberDialog';
+import { getUsersByRole } from '@/api/users';
 
 const AddTeam = () => {
   const [formData, setFormData] = useState({
@@ -21,8 +22,10 @@ const AddTeam = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // setTeamLeaders(leaders);
-        // setMembers(members);
+        const leaders = await getUsersByRole('project_lead');
+        const members = await getUsersByRole('employee');
+        setTeamLeaders(leaders);
+        setMembers(members);
       } catch (error) {
         console.error('Error fetching users:', error);
       }

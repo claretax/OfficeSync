@@ -3,13 +3,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { addUser } from '@/api/users';
+import { toast } from 'react-toastify';
 
 const AddTeamLeaderDialog = ({ open, onOpenChange, onAddLeader }) => {
   const [newUser, setNewUser] = React.useState({
     name: '',
     phone: '',
     email: '',
-    password: ''
+    role: 'project_lead'
   });
 
   const handleChange = (e) => {
@@ -22,7 +24,16 @@ const AddTeamLeaderDialog = ({ open, onOpenChange, onAddLeader }) => {
 
   const handleSubmit = async () => {
     try {
+      const user = await addUser(newUser);
+      if (user) {
+      onAddLeader(user);
+      onOpenChange(false);
+      toast.success('Team leader added successfully');
+      }else{
+        toast.error('Failed to add team leader');
+      }
     } catch (error) {
+      toast.error('Failed to add team leader');
       console.error('Network error:', error);
     }
   };
