@@ -174,8 +174,8 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(403).json({ msg: 'Not authorized to delete this project' });
     }
 
-    await project.remove();
-    res.json({ msg: 'Project removed' });
+    await project.deleteOne();
+    res.status(200).json({ msg: 'Project removed' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

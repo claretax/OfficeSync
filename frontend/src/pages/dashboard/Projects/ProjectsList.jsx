@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddProjectOverlay from '../../../components/AddProjectOverlay';
 import { getClients } from '@/api/clients';
+import { deleteProject } from '@/api/projects';
 
-function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProject }) {
+function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProject, onDeleteProject }) {
   const [isAddOverlayOpen, setIsAddOverlayOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [teams, setTeams] = useState([]);
@@ -45,6 +46,19 @@ function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProje
   const handleAddProject = (newProject) => {
     if (onAddProject) {
       onAddProject(newProject);
+    }
+  };
+
+  const handleDeleteProject = async (projectId, e) => {
+    e.stopPropagation();
+    
+    // Add confirmation dialog
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        onDeleteProject(projectId);
+      } catch (error) {
+        console.error('Error deleting project:', error);
+      }
     }
   };
   
@@ -94,10 +108,17 @@ function ProjectsList({ projects, onSelectProject, selectedProjectId, onAddProje
         {filteredProjects.map(project => (
           <li
             key={project._id}
-            className={`p-3 cursor-pointer border-b hover:bg-blue-50 ${selectedProjectId === project._id ? 'bg-blue-100 font-semibold' : ''}`}
+            className={`flex justify-between items-center p-3 cursor-pointer border-b hover:bg-blue-50 ${selectedProjectId === project._id ? 'bg-blue-100 font-semibold' : ''}`}
             onClick={() => onSelectProject(project._id)}
           >
-            {project.name}
+            <span>{project.name}</span>
+      <button
+        onClick={(e) => handleDeleteProject(project._id, e)}
+        className="text-red-500 hover:text-red-700 px-2 "
+      >
+        X
+      </button>
+
           </li>
         ))}
       </ul>

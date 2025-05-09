@@ -3,6 +3,8 @@ import ListDetailsPane from '../../../layouts/ListDetailsPane';
 import ProjectsList from './ProjectsList';
 import ProjectDetails from './ProjectDetails';
 import axios from 'axios';
+import { deleteProject } from '@/api/projects';
+import { toast } from 'react-toastify';
 const token = localStorage.getItem('token')
 
 function ProjectsView() {
@@ -48,11 +50,23 @@ function ProjectsView() {
       const addedProject = response.data;
       setProjects([...projects, addedProject]);
       setSelectedProjectId(addedProject._id);
+      toast.success('Project added successfully!');
     } catch (error) {
+      toast.error('Failed to add project. Please try again.');
       console.error("Failed to add project:", error);
     }
   };
   
+  const handleDeleteProject = async (projectId) => {
+    try {
+      const deletedProject = await deleteProject(projectId);
+      setProjects(projects.filter(p => p._id !== projectId));
+      setSelectedProjectId(projects[0]?._id || null);
+    }
+    catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  }
 
   if (loading) {
     return <div className="p-4">Loading projects...</div>;
@@ -71,6 +85,7 @@ function ProjectsView() {
           onSelectProject={setSelectedProjectId}
           selectedProjectId={selectedProjectId}
           onAddProject={handleAddProject}
+          onDeleteProject={handleDeleteProject}
         />
       }
       rightContent={
