@@ -2,6 +2,7 @@ import { API_URL } from "@/constants";
 import axios from "axios";
 import { toast } from "react-toastify";
 const token = localStorage.getItem('token')
+
 const getTeams = async () => {
    try {
     const teams = await axios.get(`${API_URL}/teams`, {headers : {
