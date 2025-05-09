@@ -7,6 +7,7 @@ import AddTeamLeaderDialog from '@/components/dialogs/AddTeamLeaderDialog';
 import AddTeamMemberDialog from '@/components/dialogs/AddTeamMemberDialog';
 import { getUsersByRole } from '@/api/users';
 import Select from 'react-select';
+import { addTeam } from '@/api/teams';
 
 const AddTeam = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -66,8 +67,8 @@ const AddTeam = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
-      onClose(); // Close dialog after submission
+      addTeam(formData);
+      onClose();
     } catch (error) {
       console.error('Network error:', error);
     }
