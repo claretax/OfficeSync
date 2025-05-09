@@ -26,6 +26,16 @@ function ProjectDetails({ project }) {
     formatDate(project?.endDateClient)
   );
 
+  useEffect(() => {
+    if (project) {
+      setStartDate(formatDate(project.startDate));
+      setEndDateTeam(formatDate(project.endDateTeam));
+      setEndDateClient(formatDate(project.endDateClient));
+      fetchExtensions();
+    }
+  }, [project]);
+
+
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
     // Optionally, notify parent component or update backend here
@@ -61,16 +71,6 @@ function ProjectDetails({ project }) {
       console.error("Failed to fetch deadline extensions:", error);
     }
   };
-
-  useEffect(() => {
-    if (project) {
-      setStartDate(formatDate(project.startDate));
-      setEndDateTeam(formatDate(project.endDateTeam));
-      setEndDateClient(formatDate(project.endDateClient));
-      fetchExtensions();
-    }
-  }, [project]);
-
   const handleExtensionAdded = (newExtension) => {
     fetchExtensions();
   };

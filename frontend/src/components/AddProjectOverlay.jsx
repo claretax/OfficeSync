@@ -8,6 +8,7 @@ import AddTeam from './forms/AddTeam';
 import AddClient from './forms/AddClient';
 import { getClients } from '@/api/clients';
 import { getTeams } from '@/api/teams';
+import { addProject } from '@/api/projects';
 
 function AddProjectOverlay({ isOpen, onClose, onAddProject }) {
   const [formData, setFormData] = useState({
@@ -122,12 +123,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject }) {
     };
 
     try {
-      // const response = await axios.post(`${import.meta.env.VITE_API_URL}/projects`, projectData, {
-      //   headers: {
-      //     'x-auth-token': token
-      //   }
-      // });
-      onAddProject(formData);
+      onAddProject(projectData);
       // Reset form
       setFormData({
         name: '',
