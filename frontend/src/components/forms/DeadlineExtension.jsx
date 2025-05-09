@@ -46,10 +46,11 @@ function DeadlineExtension({projectId, onExtensionAdded}) {
             <textarea
               name="reason"
               rows="1"
-              placeholder="reason"
+              cols="50"
+              placeholder="Reason"
               value={formData.reason}
               onChange={handleChange}
-              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-red-300"
+              className="mt-1 p-2 border rounded-md min-w-[100px] resize-x focus:outline-none focus:ring-2 focus:ring-red-300"
               required
             ></textarea>
           </div>
@@ -60,7 +61,7 @@ function DeadlineExtension({projectId, onExtensionAdded}) {
             type="submit"
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
           >
-            Add Extension
+            Add
           </button>
         </div>
       </form>
