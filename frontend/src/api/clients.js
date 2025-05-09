@@ -1,5 +1,6 @@
 import { API_URL } from "@/constants";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const getClients = async () => {
   try {
@@ -11,4 +12,17 @@ const getClients = async () => {
   }
 };
 
-export {getClients};
+const addClient = async (client) => {
+  try {
+    const response = await axios.post(`${API_URL}/clients`, client);
+    toast.success("Client added successfully");
+    console.log('thsi is the response',response.data);
+    return response.data;
+  } catch (error) {
+    toast.error(error.response.data.error);
+    console.error("Error adding client:", error);
+    return null;
+  }
+};
+
+export {getClients, addClient};

@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import AddTeam from './forms/AddTeam';
 import AddClient from './forms/AddClient';
 import { getClients } from '@/api/clients';
+import { getTeams } from '@/api/teams';
 
-function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
+function AddProjectOverlay({ isOpen, onClose, onAddProject }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -26,13 +27,16 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
   const [openTeamDialog, setOpenTeamDialog] = useState(false);
   const [openClientDialog, setOpenClientDialog] = useState(false);
   const [clients, setClients] = useState([]);
+  const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
         setClients(await getClients());
+        setTeams(await getTeams());
+
       }catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error fetching details:', error);
       }
     };
     fetchClients();
@@ -80,12 +84,31 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
     }));
   };
 
+  const handleAddTeam = (newTeam) => {
+    // Update teams state
+    setTeams(prev => [...prev, newTeam]);
+    
+    // Update form data with new team
+    setFormData(prev => ({
+      ...prev,
+      team: newTeam._id
+    }));
+    
+    setOpenTeamDialog(false);
+  };
+
   const handleAddClient = (newClient) => {
-    if (!formData.clients.includes(newClient._id)) {
-      setClients(prev => [...prev, newClient]);
-      setOpenClientDialog(false);
-    }
-  }
+    // Update clients state
+    setClients(prev => [...prev, newClient]);
+
+    // Update form data with new client
+    setFormData(prev => ({
+      ...prev,
+      clients: [...prev.clients, newClient._id]
+    }));
+
+    setOpenClientDialog(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -357,7 +380,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
         openTeamDialog && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <AddTeam onClose={() => setOpenTeamDialog(false)} />
+              <AddTeam onClose={() => setOpenTeamDialog(false)} onAddTeam={handleAddTeam} />
             </div>
           </div>
         )}
@@ -365,7 +388,7 @@ function AddProjectOverlay({ isOpen, onClose, onAddProject, teams }) {
         openClientDialog && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <AddClient onClose={() => setOpenClientDialog(false)} />
+              <AddClient onClose={() => setOpenClientDialog(false)} onAddClient = {handleAddClient} />
             </div>
           </div>
         )}

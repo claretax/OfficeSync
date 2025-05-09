@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { addClient } from '@/api/clients';
 const token = localStorage.getItem('token');
 
-const ClientForm = ({ onClose, handleAddClient }) => {
+const ClientForm = ({ onClose, onAddClient }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,31 +34,11 @@ const ClientForm = ({ onClose, handleAddClient }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/clients`, formData, {
-        headers: {'x-auth-token': token},
-      });
-      if (response.status === 201) {
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          address: '',
-          companyName: '',
-          contactPerson: '',
-          industry: '',
-          taxId: '',
-          status: 'active',
-          notes: ''
-        });
-        toast.success('Client added successfully');
-        onClose(); // Close form after successful submission
-      } else {
-        toast.error(response.data.error || 'Something went wrong');
-        console.error('Error:', await response.data);
-      }
+      const client = await addClient(formData);
+      onAddClient(client);
+      onClose();
     } catch (error) {
-      toast.error(error.response.data.error || 'Something went wrong');
-      console.error('Network error:', error);
+      console.error('Client creation error:', error);
     }
   };
 

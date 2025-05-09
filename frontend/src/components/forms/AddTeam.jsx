@@ -9,7 +9,7 @@ import { getUsersByRole } from '@/api/users';
 import Select from 'react-select';
 import { addTeam } from '@/api/teams';
 
-const AddTeam = ({ onClose }) => {
+const AddTeam = ({ onClose, onAddTeam }) => {
   const [formData, setFormData] = useState({
     name: 'New Team',
     teamLeader: '',
@@ -67,7 +67,7 @@ const AddTeam = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      addTeam(formData);
+      onAddTeam(await addTeam(formData));
       onClose();
     } catch (error) {
       console.error('Network error:', error);
