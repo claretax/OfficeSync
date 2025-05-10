@@ -31,6 +31,7 @@ app.use('/api/deadline-extensions', require('./routes/deadlineExtensions'));
 app.use('/api/pendencies', require('./routes/pendencies'));
 app.use('/api/teams', require('./routes/teamRoutes'))
 app.use('/api/clients', require('./routes/clientRoutes'))
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

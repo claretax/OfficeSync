@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
@@ -7,41 +7,56 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AddNotificationRuleDialog from '@/components/dialogs/AddNotificationRuleDialog';
+import { getNotifcationRules } from '@/api/notification';
 
 // Dummy data for notification rules
-const dummyRules = [
-  {
-    _id: '1',
-    name: 'Project Creation',
-    condition: 'project_created',
-    recipientRoles: ['team_leader', 'team_member'],
-    messageTemplate: 'New project {0} assigned to you',
-    channel: 'whatsapp'
-  },
-  {
-    _id: '2',
-    name: 'Daily Reminder',
-    condition: 'days_remaining_team < 5',
-    recipientRoles: ['admin'],
-    messageTemplate: 'Project {0} has {1} days remaining',
-    channel: 'whatsapp'
-  },
-  {
-    _id: '3',
-    name: 'Payment Status',
-    condition: 'payment_status = pending',
-    recipientRoles: ['admin'],
-    messageTemplate: 'Payment for project {0} is pending',
-    channel: 'whatsapp'
-  }
-];
+// let dummyRules = [
+//   {
+//     _id: '1',
+//     name: 'Project Creation',
+//     condition: 'project_created',
+//     recipientRoles: ['team_leader', 'team_member'],
+//     messageTemplate: 'New project {0} assigned to you',
+//     channel: 'whatsapp'
+//   },
+//   {
+//     _id: '2',
+//     name: 'Daily Reminder',
+//     condition: 'days_remaining_team < 5',
+//     recipientRoles: ['admin'],
+//     messageTemplate: 'Project {0} has {1} days remaining',
+//     channel: 'whatsapp'
+//   },
+//   {
+//     _id: '3',
+//     name: 'Payment Status',
+//     condition: 'payment_status = pending',
+//     recipientRoles: ['admin'],
+//     messageTemplate: 'Payment for project {0} is pending',
+//     channel: 'whatsapp'
+//   }
+// ];
 // NotificationSettings Component (Homepage)
 const NotificationSettings = () => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [notificationRules, setNotificationRules] = useState([]);
+  
+  useEffect(() => {
+    const fetchRules = async () => {
+      try {
+        const newNotificationRules = await getNotifcationRules();
+        setNotificationRules(newNotificationRules);
+      }
+      catch (error) {
+        console.error('Error fetching notification rules:', error);
+      }
+    }
+    fetchRules();
+  }, []);
 
   const handleAddNotificationRule = (rule) => {
-    console.log('New rule added:', rule);
-    // In a dynamic version, update state or refetch rules
+    setNotificationRules([...notificationRules, rule]);
+    setOpenDialog(false);
   };
 
   return (
@@ -61,7 +76,7 @@ const NotificationSettings = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {dummyRules.map((rule) => (
+          {notificationRules.map((rule) => (
             <TableRow key={rule._id}>
               <TableCell>{rule.name}</TableCell>
               <TableCell>{rule.condition}</TableCell>

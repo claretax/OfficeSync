@@ -65,7 +65,7 @@ const AddNotificationRuleDialog = ({ open, onOpenChange, onAddNotificationRule, 
       const newNotificationRule = await addNotificationRule(newRule);
       if (newNotificationRule) {
         const rule = await response.json();
-        onAddNotificationRule(rule); // Pass new rule to parent
+        onAddNotificationRule(rule);
         setNewRule({
           name: '',
           condition: '',
