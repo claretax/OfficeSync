@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getUsers } from '@/api/users';
+import { addNotificationRule } from '@/api/notification';
 
 const AddNotificationRuleDialog = ({ open, onOpenChange, onAddNotificationRule, token }) => {
   const [newRule, setNewRule] = useState({
@@ -22,17 +24,8 @@ const AddNotificationRuleDialog = ({ open, onOpenChange, onAddNotificationRule, 
     if (open) {
       const fetchUsers = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/users', {
-            headers: {
-              'x-auth-token': token
-            }
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setUsers(data);
-          } else {
-            console.error('Error fetching users:', await response.json());
-          }
+          const users = await getUsers();
+            setUsers(users);
         } catch (error) {
           console.error('Network error:', error);
         }
@@ -69,15 +62,8 @@ const AddNotificationRuleDialog = ({ open, onOpenChange, onAddNotificationRule, 
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notification-rules', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
-        },
-        body: JSON.stringify(newRule)
-      });
-      if (response.ok) {
+      const newNotificationRule = await addNotificationRule(newRule);
+      if (newNotificationRule) {
         const rule = await response.json();
         onAddNotificationRule(rule); // Pass new rule to parent
         setNewRule({
@@ -90,7 +76,7 @@ const AddNotificationRuleDialog = ({ open, onOpenChange, onAddNotificationRule, 
         });
         onOpenChange(false); // Close dialog
       } else {
-        console.error('Error:', await response.json());
+        console.log('Form data', newRule);
       }
     } catch (error) {
       console.error('Network error:', error);
