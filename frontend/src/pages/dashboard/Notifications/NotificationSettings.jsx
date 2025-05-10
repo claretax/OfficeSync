@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AddNotificationRuleDialog from '@/components/dialogs/AddNotificationRuleDialog';
-import { getNotifcationRules } from '@/api/notification';
+import { deleteNotificationRule, getNotifcationRules } from '@/api/notification';
 
 // Dummy data for notification rules
 // let dummyRules = [
@@ -59,6 +59,16 @@ const NotificationSettings = () => {
     setOpenDialog(false);
   };
 
+  const handleDeleteRule = async (ruleId) => {
+    try {
+      // Add API call to delete rule
+      await deleteNotificationRule(ruleId);
+      setNotificationRules(prev => prev.filter(rule => rule._id !== ruleId));
+    } catch (error) {
+      console.error('Error deleting rule:', error);
+    }
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -73,6 +83,7 @@ const NotificationSettings = () => {
             <TableHead>Recipient Roles</TableHead>
             <TableHead>Message Template</TableHead>
             <TableHead>Channel</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -83,6 +94,15 @@ const NotificationSettings = () => {
               <TableCell>{rule.recipientRoles.join(', ')}</TableCell>
               <TableCell>{rule.messageTemplate}</TableCell>
               <TableCell>{rule.channel}</TableCell>
+              <TableCell>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => handleDeleteRule(rule._id)}
+                >
+                  Delete
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

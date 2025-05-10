@@ -30,7 +30,21 @@ const addNotificationRule = async (req, res) => {
   }
 }
 
+const deleteNotificationRule = async (req, res) => {
+  const {id} = req.params;
+  try{
+    const rule = await NotificationRule.findById(id);
+    if(!rule){
+      return res.status(404).json({ message: 'Notification Rule not found' });
+    }
+    await rule.deleteOne();
+    res.status(200).json({ message: 'Notification Rule deleted' });
+  }catch(err){
+    res.status(500).json({ message: err.message });
+  }  
+}
 module.exports = {
   getNotificationRules,
-  addNotificationRule
+  addNotificationRule,
+  deleteNotificationRule
 }
