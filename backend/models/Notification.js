@@ -37,37 +37,48 @@ const notificationRuleSchema = new mongoose.Schema({
 
 // Notification Schema
 const notificationSchema = new mongoose.Schema({
-  ruleId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'NotificationRule',
-    required: true
-  },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Project'
+    ref: 'Project',
+    required: true,
   },
-  recipientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  message: {
-    type: String,
-    required: true // e.g., "New project Project X assigned to you"
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'fetched', 'sent', 'failed'],
-    default: 'pending'
-  },
-  channel: {
-    type: String,
-    enum: ['whatsapp'],
-    default: 'whatsapp'
-  },
-  errorMessage: {
-    type: String // Stores error details if status is 'failed'
-  },
+  rules: [{
+    ruleId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'NotificationRule',
+      required: true
+    },
+    notifications: [{
+      recipientId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      message: {
+        type: String,
+        required: true // e.g., "New project Project X assigned to you"
+      },
+      status: {
+        type: String,
+        enum: ['pending', 'fetched', 'sent', 'failed'],
+        default: 'pending'
+      },
+      errorMessage: {
+        type: String // Stores error details if status is 'failed'
+      },
+      sentAt: {
+        type: Date
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    appliedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now
@@ -79,9 +90,10 @@ const notificationSchema = new mongoose.Schema({
 });
 
 // Indexes for performance
-notificationSchema.index({ status: 1 });
-notificationSchema.index({ projectId: 1 });
-notificationSchema.index({ recipientId: 1 });
+notificationSchema.index({ projectId: 1 }, {unique: true});
+notificationSchema.index({ 'rules.ruleId': 1 });
+notificationSchema.index({ 'rules.notifications.recipientId': 1 });
+notificationSchema.index({ 'rules.notifications.status': 1 });
 
 // Update updatedAt on save
 notificationSchema.pre('save', function (next) {
