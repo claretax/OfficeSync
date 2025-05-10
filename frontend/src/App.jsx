@@ -9,6 +9,7 @@ import ProjectsView from "./pages/dashboard/Projects/ProjectsView";
 import { ToastContainer } from "react-toastify";
 import Users from "./pages/dashboard/users/Users";
 import AddTeam from "./components/forms/AddTeam";
+import NotificationSettings from "./pages/dashboard/Notifications/NotificationSettings";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="sms-stats" element={<SmsDashboard />} />
               <Route index element={<ProjectsView />} />
               <Route path="projects" element={<ProjectsView />} />
+              <Route path="notifications" element={<NotificationSettings />} />
               <Route path="users" element={<Users />} />
             </Route>
           </Routes>
