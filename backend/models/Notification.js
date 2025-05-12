@@ -13,7 +13,7 @@ const notificationRuleSchema = new mongoose.Schema({
   },
   recipientRoles: [{
     type: String,
-    enum: ['team_leader', 'team_member', 'admin'],
+    enum: ['project_lead', 'employee', 'admin', 'manager'],
     default: []
   }],
   recipientUserIds: [{

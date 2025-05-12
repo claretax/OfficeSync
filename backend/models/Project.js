@@ -61,8 +61,6 @@ const projectSchema = new mongoose.Schema({
 // Indexes for better query performance
 projectSchema.index({ name: 1 });
 projectSchema.index({ status: 1 });
-projectSchema.index({ manager: 1 });
-projectSchema.index({ teamMembers: 1 });
 
 const Project = mongoose.model('Project', projectSchema);
 

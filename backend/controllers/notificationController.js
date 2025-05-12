@@ -1,7 +1,7 @@
 const {Notification , NotificationRule} = require('../models/Notification');
+const Project = require('../models/Project');
 
 //Notification Controller
-
 //all the notifications
 const getNotifications = async (req, res) => {
   try{
@@ -17,11 +17,52 @@ const getNotifications = async (req, res) => {
 // get notification by projectId
 const getNotificationByProjectId = async (req, res) => {
   const {projectId} = req.params;
-  console.log(projectId);
   try{
     const notifications = await Notification.findOne({projectId})
     .populate('rules.ruleId');
-    return res.status(200).json(notifications);
+    const rules = notifications.rules.map((rule) => {
+      return {
+        ruleId: rule.ruleId._id,
+        name: rule.ruleId.name,
+        condition: rule.ruleId.condition,
+        recipientRoles: rule.ruleId.recipientRoles,
+        recipientUserIds: rule.ruleId.recipientUserIds,
+        messageTemplate: rule.ruleId.messageTemplate,
+        channel: rule.ruleId.channel,
+        isActive: rule.isActive
+      }
+    })
+
+    const project = await Project.findById(req.params.projectId)
+    .populate({
+      path: 'team',
+      populate: [
+        { path: 'teamLeader', model: 'User' },
+        { path: 'teamMembers', model: 'User' }
+      ]
+    });
+
+    let messagesData = [];
+    // console.log(project)
+    rules.forEach(rule => {
+      rule.recipientRoles.forEach(r => {
+        if(r === 'project_lead'){
+          messagesData.push({
+            ruleName : rule.name,
+            phone : project.team.teamLeader.phone,
+            message: rule.messageTemplate
+          })
+        }else if(r === 'project_member'){
+          messagesData.push({
+            ruleName : rule.name,
+            phone : project.team.teamMembers.map(m => m.phone),
+            message: rule.messageTemplate
+          })
+        }
+      })
+    });
+    console.log(messagesData) 
+    return res.status(200).json({notifications, messagesData});
   }
   catch(err){
     return res.status(500).json({ message: err.message });
