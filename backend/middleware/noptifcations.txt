@@ -1,0 +1,65 @@
+const sendNotificationsForProject = async (projectId) => {
+  const notification = await Notification.findOne({ projectId })
+    .populate('rules.ruleId')
+    .populate('rules.ruleId.recipientUserIds'); // Optional: populate users
+
+  if (!notification) return;
+
+  for (const ruleObj of notification.rules) {
+    const rule = ruleObj.ruleId;
+    if (!rule) continue;
+
+    // 1. Resolve recipient users
+    let recipients = [];
+
+    // Get users by role
+    if (rule.recipientRoles && rule.recipientRoles.length > 0) {
+      const roleUsers = await User.find({ role: { $in: rule.recipientRoles } });
+      recipients.push(...roleUsers);
+    }
+
+    // Add users from recipientUserIds
+    if (rule.recipientUserIds && rule.recipientUserIds.length > 0) {
+      const userIds = rule.recipientUserIds.map(u => u._id?.toString() || u.toString());
+      const userRefs = await User.find({ _id: { $in: userIds } });
+      recipients.push(...userRefs);
+    }
+
+    // Remove duplicates
+    const recipientMap = new Map();
+    recipients.forEach(user => recipientMap.set(user._id.toString(), user));
+    recipients = [...recipientMap.values()];
+
+    // 2. Send the notification to each recipient
+    const notificationsToLog = [];
+
+    for (const user of recipients) {
+      const message = rule.messageTemplate.replace('{name}', user.name || 'User');
+
+      try {
+        // Dummy send function — replace with actual WhatsApp API logic
+        await sendWhatsAppMessage(user.phone, message); 
+
+        notificationsToLog.push({
+          recipientId: user._id,
+          message,
+          status: 'sent',
+          sentAt: new Date(),
+        });
+
+      } catch (err) {
+        notificationsToLog.push({
+          recipientId: user._id,
+          message,
+          status: 'failed',
+          errorMessage: err.message,
+        });
+      }
+    }
+
+    // 3. Log the notifications to DB
+    ruleObj.notifications.push(...notificationsToLog);
+  }
+
+  await notification.save();
+};

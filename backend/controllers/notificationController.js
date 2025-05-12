@@ -1,6 +1,34 @@
-const {NotificationRule} = require('../models/Notification');
-const User = require('../models/User');
+const {Notification , NotificationRule} = require('../models/Notification');
 
+//Notification Controller
+
+//all the notifications
+const getNotifications = async (req, res) => {
+  try{
+    const notifications = await Notification.find({});
+
+    return res.status(200).json(notifications);
+  }
+  catch(err){
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+// get notification by projectId
+const getNotificationByProjectId = async (req, res) => {
+  const {projectId} = req.params;
+  console.log(projectId);
+  try{
+    const notifications = await Notification.findOne({projectId})
+    .populate('rules.ruleId');
+    return res.status(200).json(notifications);
+  }
+  catch(err){
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+//Notification Rule Controller
 const getNotificationRules = async (req, res) => {
   try{
     const rules = await NotificationRule.find();
@@ -44,6 +72,8 @@ const deleteNotificationRule = async (req, res) => {
   }  
 }
 module.exports = {
+  getNotifications,
+  getNotificationByProjectId,
   getNotificationRules,
   addNotificationRule,
   deleteNotificationRule
