@@ -28,7 +28,6 @@ app.use('/api/leads', require('./routes/leadRoutes'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/deadline-extensions', require('./routes/deadlineExtensions'));
-app.use('/api/pendencies', require('./routes/pendencies'));
 app.use('/api/teams', require('./routes/teamRoutes'))
 app.use('/api/clients', require('./routes/clientRoutes'))
 app.use('/api/notifications', require('./routes/notificationRoutes'));
