@@ -1,4 +1,4 @@
-const ProjectLog = require('../models/projectLogModel');
+const ProjectLog = require('../models/projectLog');
 
 const createProjectLog = async (req, res) => {
     try {
