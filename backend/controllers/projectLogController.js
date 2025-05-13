@@ -13,6 +13,7 @@ const createProjectLog = async (req, res) => {
   }
 const getProjectLogs = async (req, res) => {
     try {
+      const { projectId } = req.params;
       const projectLogs = await ProjectLog.find();
       res.status(200).json(projectLogs);
     }

@@ -4,6 +4,8 @@ import axios from "axios";
 import DeadlineExtension from "../../../components/forms/DeadlineExtension";
 import Table from "../../../components/tables/Table";
 import { formatDate } from "@/lib/utils";
+import ProjectLog from "../../../components/forms/ProjectLog";
+import { createProjectLog, fetchProjectLogs } from "@/api/projectLog";
 
 const getDateDifferenceInDays = (date1, date2) => {
   return Math.round(
@@ -20,6 +22,7 @@ function ProjectDetails({ project }) {
   const [endDateClient, setEndDateClient] = useState(
     formatDate(project?.endDateClient)
   );
+  const [projectLogs, setProjectLogs] = useState([]);
 
   useEffect(() => {
     if (project) {
@@ -27,6 +30,7 @@ function ProjectDetails({ project }) {
       setEndDateTeam(formatDate(project.endDateTeam));
       setEndDateClient(formatDate(project.endDateClient));
       fetchExtensions();
+      fetchLogs();
     }
   }, [project]);
 
@@ -67,6 +71,20 @@ function ProjectDetails({ project }) {
   };
   const handleExtensionAdded = (newExtension) => {
     fetchExtensions();
+  };
+
+  const fetchLogs = async () => {
+    try {
+      const logs = await fetchProjectLogs(project._id);
+      setProjectLogs(logs);
+    } catch (err) {
+      console.error("Failed to fetch project logs:", err);
+    }
+  };
+
+  const handleLogAdded = async (logData) => {
+    await createProjectLog(logData);
+    fetchLogs();
   };
 
   return (
@@ -168,6 +186,23 @@ function ProjectDetails({ project }) {
         </div>
       </div>
       {/* Add more project details as needed */}
+      <div className="mt-8">
+        <div className="p-2">
+          <h3 className="text-xl font-semibold">Project Logs</h3>
+        </div>
+        <div className="overflow-x-auto max-h-96 shadow-lg">
+          <Table
+            columns={[
+              { header: "Content", accessor: (row) => row.content },
+              { header: "Created By", accessor: (row) => row.createdBy?.name || "-" },
+              { header: "Created At", accessor: (row) => row.createdAt ? formatDate(row.createdAt, "dd mmm yy") : "" },
+            ]}
+            data={projectLogs}
+            noDataMessage="No project logs found."
+          />
+        </div>
+        <ProjectLog projectId={project._id} onLogAdded={handleLogAdded} />
+      </div>
     </div>
   );
 }
