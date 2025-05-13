@@ -7,11 +7,9 @@ export function cn(...inputs) {
 // utils/dateFormatter.js
 
 export function formatDate(dateInput, format = "dd mmm yy") {
+  if (!dateInput) return "";
   const date = new Date(dateInput);
-
-  if (isNaN(date)) {
-    throw new Error("Invalid date input");
-  }
+  if (isNaN(date)) return "";
 
   const day = String(date.getDate()).padStart(2, "0");
   const monthIndex = date.getMonth(); // 0-based
