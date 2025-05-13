@@ -32,6 +32,7 @@ app.use('/api/teams', require('./routes/teamRoutes'))
 app.use('/api/clients', require('./routes/clientRoutes'))
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/logs', require('./routes/logRoutes'));
+app.use('/api/periodic-tasks', require('./routes/periodicTaskRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

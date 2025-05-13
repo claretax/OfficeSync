@@ -34,8 +34,8 @@ const PeriodicTaskSchema = new Schema({
     match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/ // Validates time format
   },
   assignee: {
-    type: String, // Could reference User model ID or email
-    trim: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Reference to the User model
   },
   status: {
     type: String,
