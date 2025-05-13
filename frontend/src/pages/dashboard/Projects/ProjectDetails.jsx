@@ -193,9 +193,9 @@ function ProjectDetails({ project }) {
         <div className="overflow-x-auto max-h-96 shadow-lg">
           <Table
             columns={[
+              { header: "Created At", accessor: (row) => row.createdAt ? formatDate(row.createdAt, "dd mmm yy") : "" },
               { header: "Content", accessor: (row) => row.content },
               { header: "Created By", accessor: (row) => row.createdBy?.name || "-" },
-              { header: "Created At", accessor: (row) => row.createdAt ? formatDate(row.createdAt, "dd mmm yy") : "" },
             ]}
             data={projectLogs}
             noDataMessage="No project logs found."
