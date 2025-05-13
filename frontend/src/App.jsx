@@ -7,7 +7,7 @@ import Signup from "./components/auth/Signup";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProjectsView from "./pages/dashboard/Projects/ProjectsView";
 import { ToastContainer } from "react-toastify";
-import Users from "./pages/dashboard/users/Users";
+import Entities from "./pages/dashboard/users/Entities";
 import AddTeam from "./components/forms/AddTeam";
 import NotificationSettings from "./pages/dashboard/Notifications/NotificationSettings";
 
@@ -29,7 +29,7 @@ function App() {
               <Route index element={<ProjectsView />} />
               <Route path="projects" element={<ProjectsView />} />
               <Route path="notifications" element={<NotificationSettings />} />
-              <Route path="users" element={<Users />} />
+              <Route path="entities" element={<Entities />} />
             </Route>
           </Routes>
         </main>
