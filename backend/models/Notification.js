@@ -16,6 +16,10 @@ const notificationRuleSchema = new mongoose.Schema({
     enum: ['project_lead', 'employee', 'admin', 'manager'],
     default: []
   }],
+  frequency: {
+    type: String,
+    default: '1d'
+  },
   recipientUserIds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
