@@ -3,12 +3,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import DeadlineExtension from "../../../components/forms/DeadlineExtension";
 import Table from "../../../components/tables/Table";
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  return isNaN(date.getTime()) ? "" : date.toISOString().split("T")[0];
-};
+import { formatDate } from "@/lib/utils";
 
 const getDateDifferenceInDays = (date1, date2) => {
   return Math.round(
@@ -34,7 +29,6 @@ function ProjectDetails({ project }) {
       fetchExtensions();
     }
   }, [project]);
-
 
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
@@ -94,8 +88,8 @@ function ProjectDetails({ project }) {
               <strong>Start Date:</strong>
             </label>
             <input
-              type="date"
-              value={startDate}
+              type="text"
+              value={formatDate(startDate, "dd mmm yy")}
               onChange={handleStartDateChange}
               className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
               disabled
@@ -106,8 +100,8 @@ function ProjectDetails({ project }) {
               <strong>End Date(Team):</strong>
             </label>
             <input
-              type="date"
-              value={endDateTeam}
+              type="text"
+              value={formatDate(endDateTeam, "dd mmm yy")}
               onChange={handleEndDateTeamChange}
               className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
             />
@@ -117,8 +111,8 @@ function ProjectDetails({ project }) {
               <strong>End Date(Client):</strong>
             </label>
             <input
-              type="date"
-              value={endDateClient}
+              type="text"
+              value={formatDate(endDateClient, "dd mmm yy")}
               onChange={handleEndDateClientChange}
               className="mt-1 max-w-60 p-2 text-gray-500 focus:outline-0 focus:shadow-lg"
             />
@@ -150,16 +144,8 @@ function ProjectDetails({ project }) {
               columns={[
                 {
                   header: "Updated At",
-                  accessor: (row) => {
-                    const date = new Date(row.updatedAt);
-                    return isNaN(date.getTime())
-                      ? ""
-                      : date.toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "2-digit",
-                        }).replace(/ /g, " ");
-                  },
+                  accessor: (row) =>
+                    row.updatedAt ? formatDate(row.updatedAt, "dd mmm yy") : "",
                 },
                 {
                   header: "Days",
