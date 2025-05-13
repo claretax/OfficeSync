@@ -83,6 +83,9 @@ const notificationSchema = new mongoose.Schema({
       default: Date.now
     }
   }],
+  lastSentAt: {
+    type: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now
