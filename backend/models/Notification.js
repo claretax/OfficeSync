@@ -52,6 +52,8 @@ const notificationSchema = new mongoose.Schema({
       ref: 'NotificationRule',
       required: true
     },
+    // In the notificationSchema, update the notifications array to better track status:
+    
     notifications: [{
       recipientId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -68,7 +70,7 @@ const notificationSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        enum: ['pending', 'fetched', 'sent', 'failed'],
+        enum: ['pending', 'fetched', 'sent', 'failed', 'read'],  // Added 'read' status
         default: 'pending'
       },
       errorMessage: {
@@ -76,6 +78,12 @@ const notificationSchema = new mongoose.Schema({
       },
       sentAt: {
         type: Date
+      },
+      readAt: {
+        type: Date  // Track when notification was read
+      },
+      deliveredAt: {
+        type: Date  // Track when notification was delivered
       },
       updatedAt: {
         type: Date,

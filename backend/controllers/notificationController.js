@@ -165,10 +165,88 @@ const deleteNotificationRule = async (req, res) => {
     res.status(500).json({ message: err.message });
   }  
 }
+// Add these new controller methods
+
+// Update notification status
+const updateNotificationStatus = async (req, res) => {
+  const { notificationId, recipientId, status } = req.body;
+  
+  try {
+    const notification = await Notification.findById(notificationId);
+    
+    if (!notification) {
+      return res.status(404).json({ message: 'Notification not found' });
+    }
+    
+    // Find the specific notification for this recipient
+    let updated = false;
+    
+    for (const rule of notification.rules) {
+      for (const notif of rule.notifications) {
+        if (notif.recipientId.toString() === recipientId) {
+          notif.status = status;
+          
+          // Update timestamps based on status
+          if (status === 'sent') {
+            notif.sentAt = new Date();
+          } else if (status === 'read') {
+            notif.readAt = new Date();
+          } else if (status === 'delivered') {
+            notif.deliveredAt = new Date();
+          }
+          
+          notif.updatedAt = new Date();
+          updated = true;
+        }
+      }
+    }
+    
+    if (!updated) {
+      return res.status(404).json({ message: 'Recipient notification not found' });
+    }
+    
+    await notification.save();
+    return res.status(200).json({ message: 'Notification status updated successfully' });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// Get notification statistics
+const getNotificationStats = async (req, res) => {
+  try {
+    const stats = {
+      total: 0,
+      pending: 0,
+      sent: 0,
+      read: 0,
+      failed: 0
+    };
+    
+    const notifications = await Notification.find();
+    
+    notifications.forEach(notification => {
+      notification.rules.forEach(rule => {
+        rule.notifications.forEach(notif => {
+          stats.total++;
+          stats[notif.status]++;
+        });
+      });
+    });
+    
+    return res.status(200).json(stats);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// Export the new methods
 module.exports = {
   getNotifications,
   getNotificationByProjectId,
   getNotificationRules,
   addNotificationRule,
-  deleteNotificationRule
-}
+  deleteNotificationRule,
+  updateNotificationStatus,  // New method
+  getNotificationStats       // New method
+};

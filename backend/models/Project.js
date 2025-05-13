@@ -32,10 +32,10 @@ const projectSchema = new mongoose.Schema({
     max: 100,
     default: 0
   },
-    team:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref : 'Team'
-    },
+  team:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref : 'Team'
+  },
   clients: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Client'
@@ -53,6 +53,10 @@ const projectSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:'User'
   },
+  notification: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Notification'
+  }
 },
  {
   timestamps: true
@@ -64,4 +68,4 @@ projectSchema.index({ status: 1 });
 
 const Project = mongoose.model('Project', projectSchema);
 
-module.exports = Project; 
+module.exports = Project;

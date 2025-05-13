@@ -1,4 +1,4 @@
-  const express = require('express');
+const express = require('express');
   const router = express.Router();
   const { body, validationResult } = require('express-validator');
   const auth = require('../middleware/auth');
@@ -6,6 +6,7 @@
   const User = require('../models/User');
   const Team = require('../models/Team');
   const {Notification, NotificationRule} = require('../models/Notification');
+const { enrichNotificationRules } = require('../utils/notificationUtils');
 
   // @route   GET api/projects
   // @desc    Get all projects
@@ -77,7 +78,7 @@
         clients,
         priority,
         tags,
-        notificationRules
+        notificationRules = ['681f18a3f34f95cd3a80e685']
       } = req.body;
 
       const newProject = new Project({
@@ -99,20 +100,20 @@
         return res.status(404).json({ msg: 'Team not found' });
       }
 
-      if(notificationRules && Array.isArray(notificationRules)) {
-        const rules = notificationRules.map(id => ({
-          
-          ruleId: id,
-          notifications: []
-        }));
-  
-        //create notification
+      // In the POST route for creating a project, update the notification handling:
+      
+      if(notificationRules && Array.isArray(notificationRules) && notificationRules.length > 0) {
+        const rules = await Promise.all(notificationRules.map(id => enrichNotificationRules(id, project._id)));
+        // Create notification
         const newNotification = new Notification({
           projectId: project._id,
           rules: rules
         });
         const savedNotification = await newNotification.save();
+        
+        // Update project with notification reference
         project.notification = savedNotification._id;
+        await project.save();
       }
 
       res.json(project);
@@ -236,4 +237,4 @@
     }
   });
 
-  module.exports = router; 
+  module.exports = router;
