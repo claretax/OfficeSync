@@ -5,7 +5,11 @@ const Project = require('../models/Project');
 //all the notifications
 const getNotifications = async (req, res) => {
   try {
-    let notifications = await Notification.find({}).populate('rules.notifications');
+    let notifications = await Notification.find({})
+    .populate({
+      path: 'rules.notifications.recipientId',
+      select: 'name phone role' // only select name and phone from recipient
+    });
     if (!notifications) {
       return res.status(404).json([]);
     }

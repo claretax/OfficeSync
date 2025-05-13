@@ -78,8 +78,9 @@ const { enrichNotificationRules } = require('../utils/notificationUtils');
         clients,
         priority,
         tags,
-        notificationRules = ['681f18a3f34f95cd3a80e685']
+        notificationRules = []
       } = req.body;
+      notificationRules.push(await NotificationRule.findOne({condition: 'project_created'}))
 
       const newProject = new Project({
         name,

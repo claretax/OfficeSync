@@ -134,7 +134,7 @@ const AddNotificationRuleDialog = ({ open, onOpenChange, onAddNotificationRule, 
           <div>
             <Label>Recipient Roles</Label>
             <div className="flex flex-col gap-2">
-              {['team_leader', 'team_member', 'admin'].map((role) => (
+              {['project_lead', 'project_member', 'admin'].map((role) => (
                 <div key={role} className="flex items-center gap-2">
                   <Checkbox
                     id={role}

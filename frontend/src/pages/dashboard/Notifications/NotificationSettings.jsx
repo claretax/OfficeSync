@@ -15,7 +15,7 @@ import { deleteNotificationRule, getNotifcationRules } from '@/api/notification'
 //     _id: '1',
 //     name: 'Project Creation',
 //     condition: 'project_created',
-//     recipientRoles: ['team_leader', 'team_member'],
+//     recipientRoles: ['project_lead', 'project_member'],
 //     messageTemplate: 'New project {0} assigned to you',
 //     channel: 'whatsapp'
 //   },
