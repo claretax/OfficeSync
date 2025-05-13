@@ -4,15 +4,68 @@ const Project = require('../models/Project');
 //Notification Controller
 //all the notifications
 const getNotifications = async (req, res) => {
-  try{
-    const notifications = await Notification.find({});
+  try {
+    let notifications = await Notification.find({}).populate('rules.ruleId');
 
-    return res.status(200).json(notifications);
-  }
-  catch(err){
+    const enrichedNotifications = [];
+
+    for (const notification of notifications) {
+      const rules = notification.rules.map(rule => ({
+        ruleId: rule.ruleId._id,
+        name: rule.ruleId.name,
+        condition: rule.ruleId.condition,
+        recipientRoles: rule.ruleId.recipientRoles,
+        recipientUserIds: rule.ruleId.recipientUserIds,
+        messageTemplate: rule.ruleId.messageTemplate,
+        channel: rule.ruleId.channel,
+        isActive: rule.isActive
+      }));
+
+      // Fetch the associated project
+      const project = await Project.findById(notification.projectId).populate({
+        path: 'team',
+        populate: [
+          { path: 'teamLeader', model: 'User' },
+          { path: 'teamMembers', model: 'User' }
+        ]
+      });
+
+      // Generate messagesData
+      let messagesData = [];
+
+      rules.forEach(rule => {
+        rule.recipientRoles.forEach(role => {
+          if (role === 'project_lead' && project?.team?.teamLeader?.phone) {
+            messagesData.push({
+              ruleName: rule.name,
+              phone: project.team.teamLeader.phone,
+              message: rule.messageTemplate
+            });
+          } else if (role === 'project_member' && Array.isArray(project?.team?.teamMembers)) {
+            const phones = project.team.teamMembers.map(m => m.phone).filter(Boolean);
+            if (phones.length > 0) {
+              messagesData.push({
+                ruleName: rule.name,
+                phone: phones,
+                message: rule.messageTemplate
+              });
+            }
+          }
+        });
+      });
+      // Attach messagesData to notification
+      const enrichedNotification = {
+        ...notification.toObject(),
+        messagesData
+      };
+      enrichedNotifications.push(enrichedNotification);
+    }
+    return res.status(200).json(enrichedNotifications);
+  } catch (err) {
     return res.status(500).json({ message: err.message });
   }
-}
+};
+
 
 // get notification by projectId
 const getNotificationByProjectId = async (req, res) => {
