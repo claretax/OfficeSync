@@ -87,7 +87,7 @@ function ProjectDetails({ project }) {
         <div className="flex flex-wrap justify-between items-center gap-2">
           <p>
             <strong>Team Leader:</strong>{" "}
-            {project?.team.teamLeader?.name || "Not Assigned"}
+            {project?.team?.teamLeader?.name || "Not Assigned"}
           </p>
           <div className="flex flex-row gap-2 justify-between items-center">
             <label className="block text-sm font-medium text-gray-700">
