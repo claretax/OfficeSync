@@ -101,6 +101,7 @@
 
       if(notificationRules && Array.isArray(notificationRules)) {
         const rules = notificationRules.map(id => ({
+          
           ruleId: id,
           notifications: []
         }));

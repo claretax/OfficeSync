@@ -60,7 +60,11 @@ const notificationSchema = new mongoose.Schema({
       },
       message: {
         type: String,
-        required: true // e.g., "New project Project X assigned to you"
+        required: true
+      },
+      frequency: {
+        type: String,
+        default: '1d'
       },
       status: {
         type: String,
