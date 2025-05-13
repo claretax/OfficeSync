@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
-import { getUsers } from "@/api/users";
+import { deleteUser, getUsers } from "@/api/users";
 import { getTeams } from "@/api/teams";
 import { getClients } from "@/api/clients";
 
@@ -11,6 +11,18 @@ function Entities() {
   const [clients, setClients] = useState([]);
   const [teams, setTeams] = useState([]);
 
+  // Handler examples
+  const handleEditUser = (user) => {
+    // Open edit dialog or navigate to edit page
+    console.log('Edit user:', user);
+  };  
+  const handleDeleteUser = (user) => {
+    const deletedUser = deleteUser(user._id)
+    if(deletedUser._id){
+      setUsers(users.filter((u) => u._id !== user._id))
+    }
+  };
+  // Repeat similar handlers for clients and teams if needed
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -50,8 +62,8 @@ function Entities() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm" className="mr-2"><Edit size={16} /></Button>
-                  <Button variant="destructive" size="sm"><Trash size={16} /></Button>
+                  <Button variant="outline" size="sm" className="mr-2" onClick={() => handleEditUser(user)}><Edit size={16} /></Button>
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(user)}><Trash size={16} /></Button>
                 </TableCell>
               </TableRow>
             )) : (
@@ -63,7 +75,7 @@ function Entities() {
         </Table>
       </div>
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Users</h2>
+        <h2 className="text-xl font-bold mb-4">Clients</h2>
         <Table>
           <TableHeader>
             <TableRow>
@@ -80,8 +92,8 @@ function Entities() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.companyName}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm" className="mr-2"><Edit size={16} /></Button>
-                  <Button variant="destructive" size="sm"><Trash size={16} /></Button>
+                  <Button variant="outline" size="sm" className="mr-2" onClick={() => handleEditUser(user)}><Edit size={16} /></Button>
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(user)}><Trash size={16} /></Button>
                 </TableCell>
               </TableRow>
             )) : (
@@ -93,7 +105,7 @@ function Entities() {
         </Table>
       </div>
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Users</h2>
+        <h2 className="text-xl font-bold mb-4">Teams</h2>
         <Table>
           <TableHeader>
             <TableRow>
@@ -110,8 +122,8 @@ function Entities() {
                 <TableCell>{user.teamLeader.name || 'N/A'}</TableCell>
                 <TableCell>{user.teamMembers.length}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm" className="mr-2"><Edit size={16} /></Button>
-                  <Button variant="destructive" size="sm"><Trash size={16} /></Button>
+                  <Button variant="outline" size="sm" className="mr-2" onClick={() => handleEditUser(user)}><Edit size={16} /></Button>
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(user)}><Trash size={16} /></Button>
                 </TableCell>
               </TableRow>
             )) : (
