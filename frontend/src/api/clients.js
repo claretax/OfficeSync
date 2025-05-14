@@ -25,4 +25,17 @@ const addClient = async (client) => {
   }
 };
 
-export {getClients, addClient};
+const deleteClient = async (clientId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/clients/${clientId}`);
+    toast.success("Client deleted successfully");
+    return response.data;
+  }
+  catch (error) {
+    toast.error(error.response.data.error);
+    console.error("Error deleting client:", error);
+    return null;
+  }
+}
+
+export {getClients, addClient, deleteClient};

@@ -31,4 +31,20 @@ const addTeam = async (team) => {
     }
 }
 
-export {getTeams, addTeam}
+const deleteTeam = async (id) => {
+    try {
+        const response = await axios.delete(`${API_URL}/teams/${id}`, {headers : {
+            'x-auth-token':token,
+        }})
+        if (response.status === 200 || response.status === 201) {
+            toast.success("Team deleted successfully")
+        }
+        return response.data
+    }
+    catch (error) {
+        toast.error(error.response.data.error)
+        return error.response.data
+    }
+}
+
+export {getTeams, addTeam, deleteTeam}

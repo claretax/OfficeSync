@@ -3,8 +3,8 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
 import { deleteUser, getUsers } from "@/api/users";
-import { getTeams } from "@/api/teams";
-import { getClients } from "@/api/clients";
+import { deleteTeam, getTeams } from "@/api/teams";
+import { deleteClient, getClients } from "@/api/clients";
 import AddClient from "@/components/forms/AddClient";
 import AddTeam from "@/components/forms/AddTeam";
 import AddTeamMemberDialog from "@/components/dialogs/AddTeamMemberDialog";

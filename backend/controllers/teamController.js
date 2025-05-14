@@ -20,5 +20,19 @@ const createTeam = async(req, res)=>{
         res.status(5000).json({error:"Internal server error"})
     }
 }
+const deleteTeam = async (req, res) => {
+    const { id } = req.params
+    try {
+        const deletedTeam = await Team.findByIdAndDelete(id)
+        if (!deletedTeam) {
+            return res.status(404).json({ error: "Team not found" })
+        }
+        res.status(200).json(deletedTeam)
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" })
+    }
+}
 
-module.exports = {getTeams, createTeam}
+
+
+module.exports = {getTeams, createTeam, deleteTeam}
