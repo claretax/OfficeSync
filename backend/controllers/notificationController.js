@@ -118,6 +118,8 @@ const updateNotificationStatus = async (req, res) => {
       for (const notif of rule.notifications) {
         if (notif.recipientId.toString() === recipientId) {
           notif.status = status;
+          notif.nextSendAt = nextSendAt;
+          notif.updatedAt = new Date();
           
           // Update timestamps based on status
           if (status === 'sent') {
