@@ -6,6 +6,8 @@ const Project = require('../models/Project');
 const getNotifications = async (req, res) => {
   try {
     let notifications = await Notification.find({})
+    .populate('projectId')
+    .populate('rules.ruleId') // populate the notifications array
     .populate({
       path: 'rules.notifications.recipientId',
       select: 'name phone role' // only select name and phone from recipient
