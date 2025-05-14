@@ -1,46 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AddNotificationRuleDialog from '@/components/dialogs/AddNotificationRuleDialog';
-import { deleteNotificationRule, getNotifcationRules } from '@/api/notification';
+import { deleteNotificationRule, getNotifcationRules, getNotifications, deleteNotification } from '@/api/notification';
 
-// Dummy data for notification rules
-// let dummyRules = [
-//   {
-//     _id: '1',
-//     name: 'Project Creation',
-//     condition: 'project_created',
-//     recipientRoles: ['project_lead', 'project_member'],
-//     messageTemplate: 'New project {0} assigned to you',
-//     channel: 'whatsapp'
-//   },
-//   {
-//     _id: '2',
-//     name: 'Daily Reminder',
-//     condition: 'days_remaining_team < 5',
-//     recipientRoles: ['admin'],
-//     messageTemplate: 'Project {0} has {1} days remaining',
-//     channel: 'whatsapp'
-//   },
-//   {
-//     _id: '3',
-//     name: 'Payment Status',
-//     condition: 'payment_status = pending',
-//     recipientRoles: ['admin'],
-//     messageTemplate: 'Payment for project {0} is pending',
-//     channel: 'whatsapp'
-//   }
-// ];
 // NotificationSettings Component (Homepage)
 const NotificationSettings = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [notificationRules, setNotificationRules] = useState([]);
-  
+  const [notifications, setNotifications] = useState([]);
+
+  // Fetch notification rules
   useEffect(() => {
     const fetchRules = async () => {
       try {
@@ -54,6 +24,19 @@ const NotificationSettings = () => {
     fetchRules();
   }, []);
 
+  // Fetch notifications
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const data = await getNotifications();
+        setNotifications(data);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+    fetchNotifications();
+  }, []);
+
   const handleAddNotificationRule = (rule) => {
     setNotificationRules([...notificationRules, rule]);
     setOpenDialog(false);
@@ -61,11 +44,19 @@ const NotificationSettings = () => {
 
   const handleDeleteRule = async (ruleId) => {
     try {
-      // Add API call to delete rule
       await deleteNotificationRule(ruleId);
       setNotificationRules(prev => prev.filter(rule => rule._id !== ruleId));
     } catch (error) {
       console.error('Error deleting rule:', error);
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId) => {
+    try {
+      await deleteNotification(notificationId);
+      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+    } catch (error) {
+      console.error('Error deleting notification:', error);
     }
   };
 
@@ -75,6 +66,8 @@ const NotificationSettings = () => {
         <h1 className="text-2xl font-bold">Notification Settings</h1>
         <Button onClick={() => setOpenDialog(true)}>Add New Rule</Button>
       </div>
+      {/* Notification Rules Table */}
+      <h2 className="text-xl font-semibold mb-2">Notification Rules</h2>
       <Table>
         <TableHeader>
           <TableRow>
@@ -111,8 +104,49 @@ const NotificationSettings = () => {
         open={openDialog}
         onOpenChange={setOpenDialog}
         onAddNotificationRule={handleAddNotificationRule}
-        token="dummy-token" // Placeholder for static version
+        token="dummy-token"
       />
+
+      {/* Notifications Table */}
+      <h2 className="text-xl font-semibold mt-10 mb-2">Notifications</h2>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Project</TableHead>
+            <TableHead>Rule</TableHead>
+            <TableHead>Recipient</TableHead>
+            <TableHead>Message</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {notifications.map((notification) =>
+            notification.rules.flatMap((rule) =>
+              rule.notifications.map((notif, idx) => (
+                <TableRow key={notif._id || `${notification._id}-${rule.ruleId}-${notif.recipientId}-${idx}`}>
+                  <TableCell>{notification.projectId?.name || notification.projectId || '-'}</TableCell>
+                  <TableCell>{rule.ruleId?.name || rule.ruleId || '-'}</TableCell>
+                  <TableCell>
+                    {notif.recipientId?.name || notif.recipientId || '-'}
+                  </TableCell>
+                  <TableCell>{notif.message}</TableCell>
+                  <TableCell>{notif.status}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteNotification(notification._id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };

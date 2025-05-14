@@ -76,6 +76,9 @@ const notificationSchema = new mongoose.Schema({
       errorMessage: {
         type: String // Stores error details if status is 'failed'
       },
+      nextSendAt: {
+        type: Date,
+      },
       sentAt: {
         type: Date
       },

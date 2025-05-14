@@ -81,12 +81,28 @@ const deleteNotificationRule = async (req, res) => {
 }
 // Add these new controller methods
 
+// delete notification
+const deleteNotification = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ message: 'Notification not found' });
+    }
+    await notification.deleteOne();
+    res.status(200).json({ message: 'Notification deleted' });
+  }
+  catch(err){
+    res.status(500).json({ message: err.message });
+  }
+}
+
 // Update notification status
 const updateNotificationStatus = async (req, res) => {
-  const { notificationId, recipientId, status } = req.body;
+  const { recipientId, status, nextSendAt, ruleId } = req.body;
   
   try {
-    const notification = await Notification.findById(notificationId);
+    const notification = await Notification.findById(req.params.id);
     
     if (!notification) {
       return res.status(404).json({ message: 'Notification not found' });
@@ -96,6 +112,7 @@ const updateNotificationStatus = async (req, res) => {
     let updated = false;
     
     for (const rule of notification.rules) {
+      if (rule.ruleId.toString() !== ruleId) continue;
       for (const notif of rule.notifications) {
         if (notif.recipientId.toString() === recipientId) {
           notif.status = status;
@@ -158,6 +175,7 @@ const getNotificationStats = async (req, res) => {
 module.exports = {
   getNotifications,
   getNotificationByProjectId,
+  deleteNotification,
   getNotificationRules,
   addNotificationRule,
   deleteNotificationRule,

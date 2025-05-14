@@ -2,6 +2,28 @@ import { API_URL } from "@/constants";
 import { toast } from "react-toastify";
 const token = localStorage.getItem('token');
 
+
+const getNotifications = async () => {
+  const res = await fetch(`${API_URL}/notifications`, {
+    headers: {
+      'x-auth-token': `${token}`,
+    },
+  });
+  return res.json();
+}
+// delete notification
+const deleteNotification = async (id) => {
+  const res = await fetch(`${API_URL}/notifications/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'x-auth-token': `${token}`,
+    },
+  });
+  if (res.status === 200 || res.status === 204){
+    toast.success("Notification Deleted Successfully");
+  }
+}
+
 const getNotifcationRules = async () => {
   const res = await fetch(`${API_URL}/notifications/rules`, {
     headers: {
@@ -39,4 +61,4 @@ const deleteNotificationRule = async (ruleId) => {
   return res;
 }
 
-export { getNotifcationRules, addNotificationRule, deleteNotificationRule};
+export {getNotifications, deleteNotification, getNotifcationRules, addNotificationRule, deleteNotificationRule};
