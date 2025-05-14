@@ -9,6 +9,8 @@ import AddClient from "@/components/forms/AddClient";
 import AddTeam from "@/components/forms/AddTeam";
 import AddTeamMemberDialog from "@/components/dialogs/AddTeamMemberDialog";
 import AddTeamLeaderDialog from "@/components/dialogs/AddTeamLeaderDialog";
+import { getPeriodicTasks, addPeriodicTask, updatePeriodicTask, deletePeriodicTask } from "@/api/periodicTasks";
+import AddPeriodicTask from "@/components/forms/AddPeriodicTask";
 
 function Entities() {
   const [users, setUsers] = useState([]);
@@ -19,6 +21,9 @@ function Entities() {
   const [showAddTL, setShowAddTL] = useState(false);
   const [showAddMem, setShowAddMem] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false); // For AddTeamMemberDialog or AddTeamLeaderDialog
+  const [periodicTasks, setPeriodicTasks] = useState([]);
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [editTask, setEditTask] = useState(null);
 
   // Handler examples
   const handleEditUser = (user) => {
@@ -63,12 +68,29 @@ function Entities() {
         setUsers(usersData);
         setClients(clientsData);
         setTeams(teamsData);
+        const periodicTasksData = await getPeriodicTasks();
+        setPeriodicTasks(periodicTasksData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
   }, []);
+
+  const handleAddTask = async (task) => {
+    const newTask = await addPeriodicTask(task);
+    setPeriodicTasks([...periodicTasks, newTask]);
+  };
+
+  const handleEditTask = async (task) => {
+    const updated = await updatePeriodicTask(task._id, task);
+    setPeriodicTasks(periodicTasks.map(t => t._id === task._id ? updated : t));
+  };
+
+  const handleDeleteTask = async (task) => {
+    await deletePeriodicTask(task._id);
+    setPeriodicTasks(periodicTasks.filter(t => t._id !== task._id));
+  };
 
   return (
     <div className="p-4">
@@ -200,6 +222,49 @@ function Entities() {
           <AddTeam
             onClose={() => setShowAddTeam(false)}
             onAddTeam={team => setTeams([...teams, team])}
+          />
+        )}
+      </div>
+      {/* Periodic Tasks Section */}
+      <div className="mb-8 shadow-xl">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Periodic Tasks</h2>
+          <Button onClick={() => { setEditTask(null); setShowAddTask(true); }}>Add Task</Button>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Frequency</TableHead>
+              <TableHead>Next Run</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {periodicTasks.length > 0 ? periodicTasks.map((task, idx) => (
+              <TableRow key={idx}>
+                <TableCell>{task.taskName}</TableCell>
+                <TableCell>{task.description}</TableCell>
+                <TableCell>{task.frequency}</TableCell>
+                <TableCell>{task.nextRun}</TableCell>
+                <TableCell>
+                  <Button variant="outline" size="sm" className="mr-2" onClick={() => { setEditTask(task); setShowAddTask(true); }}>Edit</Button>
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteTask(task)}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            )) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-gray-500">No periodic tasks found</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        {showAddTask && (
+          <AddPeriodicTask
+            onClose={() => setShowAddTask(false)}
+            onSave={editTask ? handleEditTask : handleAddTask}
+            initialData={editTask}
           />
         )}
       </div>

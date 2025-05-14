@@ -35,7 +35,7 @@ const PeriodicTaskSchema = new Schema({
   },
   assignee: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'User',
   },
   status: {
     type: String,
@@ -65,7 +65,7 @@ const PeriodicTaskSchema = new Schema({
     default: Date.now
   }
 }, {
-  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } // Automatically manage createdAt/updatedAt
+  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
 });
 
 // Index for efficient querying by startDate and frequency
