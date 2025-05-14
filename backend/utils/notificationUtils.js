@@ -66,6 +66,7 @@ async function enrichNotificationRules(ruleId, projectId) {
         frequency: notificationRule.frequency,
         status: 'pending',
         errorMessage: null,
+        nextSendAt: null,
         sentAt: null,
         readAt: null,
         deliveredAt: null,
