@@ -118,10 +118,13 @@ function Entities() {
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
-                <TableCell>
+                {user.role !== 'admin' &&
+                (
+                  <TableCell>
                   <Button variant="outline" size="sm" className="mr-2" onClick={() => handleEditUser(user)}><Edit size={16} /></Button>
                   <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(user)}><Trash size={16} /></Button>
                 </TableCell>
+                )}
               </TableRow>
             )) : (
               <TableRow>
